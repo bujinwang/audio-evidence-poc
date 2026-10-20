@@ -1,0 +1,368 @@
+{
+  "language": "en",
+  "source": "synthetic-noisy-test-set",
+  "note": "Reference transcript for a synthetic bodycam_street recording at 8 dB SNR (applied, not estimated). Timestamps are exact: each line was synthesised separately and noise was mixed on the same timeline.",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 3.6,
+      "text": "Evening. Licence and registration, please.",
+      "speaker": "SPEAKER_10",
+      "words": [
+        {
+          "w": "Evening.",
+          "start": 0.0,
+          "end": 0.753
+        },
+        {
+          "w": "Licence",
+          "start": 0.753,
+          "end": 1.423
+        },
+        {
+          "w": "and",
+          "start": 1.423,
+          "end": 1.758
+        },
+        {
+          "w": "registration,",
+          "start": 1.758,
+          "end": 2.93
+        },
+        {
+          "w": "please.",
+          "start": 2.93,
+          "end": 3.6
+        }
+      ]
+    },
+    {
+      "start": 4.35,
+      "end": 7.134,
+      "text": "Is there a problem, officer?",
+      "speaker": "SPEAKER_13",
+      "words": [
+        {
+          "w": "Is",
+          "start": 4.35,
+          "end": 4.638
+        },
+        {
+          "w": "there",
+          "start": 4.638,
+          "end": 5.214
+        },
+        {
+          "w": "a",
+          "start": 5.214,
+          "end": 5.406
+        },
+        {
+          "w": "problem,",
+          "start": 5.406,
+          "end": 6.27
+        },
+        {
+          "w": "officer?",
+          "start": 6.27,
+          "end": 7.134
+        }
+      ]
+    },
+    {
+      "start": 7.884,
+      "end": 11.916,
+      "text": "Your tail light is out and you drifted over the centre line back there.",
+      "speaker": "SPEAKER_10",
+      "words": [
+        {
+          "w": "Your",
+          "start": 7.884,
+          "end": 8.164
+        },
+        {
+          "w": "tail",
+          "start": 8.164,
+          "end": 8.444
+        },
+        {
+          "w": "light",
+          "start": 8.444,
+          "end": 8.78
+        },
+        {
+          "w": "is",
+          "start": 8.78,
+          "end": 8.948
+        },
+        {
+          "w": "out",
+          "start": 8.948,
+          "end": 9.172
+        },
+        {
+          "w": "and",
+          "start": 9.172,
+          "end": 9.396
+        },
+        {
+          "w": "you",
+          "start": 9.396,
+          "end": 9.62
+        },
+        {
+          "w": "drifted",
+          "start": 9.62,
+          "end": 10.068
+        },
+        {
+          "w": "over",
+          "start": 10.068,
+          "end": 10.348
+        },
+        {
+          "w": "the",
+          "start": 10.348,
+          "end": 10.572
+        },
+        {
+          "w": "centre",
+          "start": 10.572,
+          "end": 10.964
+        },
+        {
+          "w": "line",
+          "start": 10.964,
+          "end": 11.244
+        },
+        {
+          "w": "back",
+          "start": 11.244,
+          "end": 11.524
+        },
+        {
+          "w": "there.",
+          "start": 11.524,
+          "end": 11.916
+        }
+      ]
+    },
+    {
+      "start": 12.666,
+      "end": 17.298,
+      "text": "I did not realise. I am coming off a night shift.",
+      "speaker": "SPEAKER_13",
+      "words": [
+        {
+          "w": "I",
+          "start": 12.666,
+          "end": 12.851
+        },
+        {
+          "w": "did",
+          "start": 12.851,
+          "end": 13.222
+        },
+        {
+          "w": "not",
+          "start": 13.222,
+          "end": 13.592
+        },
+        {
+          "w": "realise.",
+          "start": 13.592,
+          "end": 14.426
+        },
+        {
+          "w": "I",
+          "start": 14.426,
+          "end": 14.611
+        },
+        {
+          "w": "am",
+          "start": 14.611,
+          "end": 14.889
+        },
+        {
+          "w": "coming",
+          "start": 14.889,
+          "end": 15.538
+        },
+        {
+          "w": "off",
+          "start": 15.538,
+          "end": 15.908
+        },
+        {
+          "w": "a",
+          "start": 15.908,
+          "end": 16.094
+        },
+        {
+          "w": "night",
+          "start": 16.094,
+          "end": 16.65
+        },
+        {
+          "w": "shift.",
+          "start": 16.65,
+          "end": 17.298
+        }
+      ]
+    },
+    {
+      "start": 18.048,
+      "end": 20.544,
+      "text": "Have you had anything to drink tonight?",
+      "speaker": "SPEAKER_10",
+      "words": [
+        {
+          "w": "Have",
+          "start": 18.048,
+          "end": 18.36
+        },
+        {
+          "w": "you",
+          "start": 18.36,
+          "end": 18.61
+        },
+        {
+          "w": "had",
+          "start": 18.61,
+          "end": 18.859
+        },
+        {
+          "w": "anything",
+          "start": 18.859,
+          "end": 19.421
+        },
+        {
+          "w": "to",
+          "start": 19.421,
+          "end": 19.608
+        },
+        {
+          "w": "drink",
+          "start": 19.608,
+          "end": 19.982
+        },
+        {
+          "w": "tonight?",
+          "start": 19.982,
+          "end": 20.544
+        }
+      ]
+    },
+    {
+      "start": 21.294,
+      "end": 23.79,
+      "text": "No, nothing at all.",
+      "speaker": "SPEAKER_13",
+      "words": [
+        {
+          "w": "No,",
+          "start": 21.294,
+          "end": 21.793
+        },
+        {
+          "w": "nothing",
+          "start": 21.793,
+          "end": 22.792
+        },
+        {
+          "w": "at",
+          "start": 22.792,
+          "end": 23.166
+        },
+        {
+          "w": "all.",
+          "start": 23.166,
+          "end": 23.79
+        }
+      ]
+    },
+    {
+      "start": 24.54,
+      "end": 28.596,
+      "text": "Please step out of the vehicle and keep your hands where I can see them.",
+      "speaker": "SPEAKER_10",
+      "words": [
+        {
+          "w": "Please",
+          "start": 24.54,
+          "end": 24.929
+        },
+        {
+          "w": "step",
+          "start": 24.929,
+          "end": 25.207
+        },
+        {
+          "w": "out",
+          "start": 25.207,
+          "end": 25.429
+        },
+        {
+          "w": "of",
+          "start": 25.429,
+          "end": 25.596
+        },
+        {
+          "w": "the",
+          "start": 25.596,
+          "end": 25.818
+        },
+        {
+          "w": "vehicle",
+          "start": 25.818,
+          "end": 26.262
+        },
+        {
+          "w": "and",
+          "start": 26.262,
+          "end": 26.485
+        },
+        {
+          "w": "keep",
+          "start": 26.485,
+          "end": 26.762
+        },
+        {
+          "w": "your",
+          "start": 26.762,
+          "end": 27.04
+        },
+        {
+          "w": "hands",
+          "start": 27.04,
+          "end": 27.374
+        },
+        {
+          "w": "where",
+          "start": 27.374,
+          "end": 27.707
+        },
+        {
+          "w": "I",
+          "start": 27.707,
+          "end": 27.818
+        },
+        {
+          "w": "can",
+          "start": 27.818,
+          "end": 28.04
+        },
+        {
+          "w": "see",
+          "start": 28.04,
+          "end": 28.263
+        },
+        {
+          "w": "them.",
+          "start": 28.263,
+          "end": 28.596
+        }
+      ]
+    }
+  ]
+}

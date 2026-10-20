@@ -1,0 +1,64 @@
+[
+  {
+    "meeting_id": "EN2002a",
+    "audio": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/real-audio/AMI_EN2002a_sdm.wav",
+    "sidecar": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/real-audio/AMI_EN2002a_sdm.transcript.json",
+    "filename": "AMI_EN2002a_sdm.wav",
+    "source_type": "other",
+    "recorded_at": null,
+    "duration_s": 94.04,
+    "segments": 91,
+    "speakers": [
+      "FEO070",
+      "FEO072",
+      "MEE071",
+      "MEE073"
+    ],
+    "reconstructed": true,
+    "condition": "sdm",
+    "cross_talk_removed": false,
+    "license": "CC BY 4.0",
+    "citation": "Carletta, J. et al. (2006). The AMI Meeting Corpus: A Pre-announcement. In Machine Learning for Multimodal Interaction (MLMI 2005), LNCS 3869."
+  },
+  {
+    "meeting_id": "EN2002b",
+    "audio": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/real-audio/AMI_EN2002b_sdm.wav",
+    "sidecar": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/real-audio/AMI_EN2002b_sdm.transcript.json",
+    "filename": "AMI_EN2002b_sdm.wav",
+    "source_type": "other",
+    "recorded_at": null,
+    "duration_s": 92.5,
+    "segments": 79,
+    "speakers": [
+      "FEO070",
+      "FEO072",
+      "MEE071",
+      "MEE073"
+    ],
+    "reconstructed": true,
+    "condition": "sdm",
+    "cross_talk_removed": false,
+    "license": "CC BY 4.0",
+    "citation": "Carletta, J. et al. (2006). The AMI Meeting Corpus: A Pre-announcement. In Machine Learning for Multimodal Interaction (MLMI 2005), LNCS 3869."
+  },
+  {
+    "meeting_id": "EN2002c",
+    "audio": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/real-audio/AMI_EN2002c_sdm.wav",
+    "sidecar": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/real-audio/AMI_EN2002c_sdm.transcript.json",
+    "filename": "AMI_EN2002c_sdm.wav",
+    "source_type": "other",
+    "recorded_at": null,
+    "duration_s": 89.95,
+    "segments": 45,
+    "speakers": [
+      "FEO072",
+      "MEE071",
+      "MEE073"
+    ],
+    "reconstructed": true,
+    "condition": "sdm",
+    "cross_talk_removed": false,
+    "license": "CC BY 4.0",
+    "citation": "Carletta, J. et al. (2006). The AMI Meeting Corpus: A Pre-announcement. In Machine Learning for Multimodal Interaction (MLMI 2005), LNCS 3869."
+  }
+]

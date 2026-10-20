@@ -1,0 +1,10 @@
+-r requirements.txt
+pytest>=8.0
+httpx>=0.27
+# Neural TTS for scripts/make_demo_data.py (demo data only, not a runtime dep).
+edge-tts>=7.0
+# Reading the AMI corpus for scripts/fetch_real_audio.py and
+# scripts/ablate_real_audio.py (evaluation data only, not a runtime dep).
+pyarrow>=15
+soundfile>=0.12
+huggingface_hub>=0.23

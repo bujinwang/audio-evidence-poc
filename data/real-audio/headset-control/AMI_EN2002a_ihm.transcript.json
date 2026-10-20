@@ -1,0 +1,826 @@
+{
+  "language": "en",
+  "source": "ami-corpus-ihm",
+  "note": "Human transcript from the AMI Meeting Corpus annotations. Audio is reconstructed: corpus utterances placed at their annotated offsets, with silence between them.",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 2.72,
+      "abs_begin": 1883.55,
+      "abs_end": 1886.27,
+      "text": "THREE IS ALRIGHT",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 0.73,
+      "end": 1.17,
+      "abs_begin": 1884.28,
+      "abs_end": 1884.72,
+      "text": "POSSIBLY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 2.72,
+      "end": 3.94,
+      "abs_begin": 1886.27,
+      "abs_end": 1887.49,
+      "text": "IT WAS WHAT TIME'S D. N. L. G.",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 3.35,
+      "end": 3.54,
+      "abs_begin": 1886.9,
+      "abs_end": 1887.09,
+      "text": "YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 3.94,
+      "end": 4.7,
+      "abs_begin": 1887.49,
+      "abs_end": 1888.25,
+      "text": "FOUR ISN'T IT",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 4.79,
+      "end": 5.47,
+      "abs_begin": 1888.34,
+      "abs_end": 1889.02,
+      "text": "IT'S FULL YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 5.31,
+      "end": 8.73,
+      "abs_begin": 1888.86,
+      "abs_end": 1892.28,
+      "text": "UNLESS YOU WANNA DO IT AFTER THE UM AFTER D.",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 5.56,
+      "end": 5.86,
+      "abs_begin": 1889.11,
+      "abs_end": 1889.41,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 8.02,
+      "end": 9.31,
+      "abs_begin": 1891.57,
+      "abs_end": 1892.86,
+      "text": "YEAH THAT'S AN OPTION TOO",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 9.31,
+      "end": 10.28,
+      "abs_begin": 1892.86,
+      "abs_end": 1893.83,
+      "text": "YEAH AFTER",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 9.72,
+      "end": 10.13,
+      "abs_begin": 1893.27,
+      "abs_end": 1893.68,
+      "text": "D. AND A.",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 11.76,
+      "end": 12.41,
+      "abs_begin": 1895.31,
+      "abs_end": 1895.96,
+      "text": "SURE",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 12.37,
+      "end": 13.23,
+      "abs_begin": 1895.92,
+      "abs_end": 1896.78,
+      "text": "THREE'S GOOD THOUGH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 12.41,
+      "end": 12.98,
+      "abs_begin": 1895.96,
+      "abs_end": 1896.53,
+      "text": "THAT'S FINE",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 12.53,
+      "end": 12.74,
+      "abs_begin": 1896.08,
+      "abs_end": 1896.29,
+      "text": "YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 13.23,
+      "end": 15.48,
+      "abs_begin": 1896.78,
+      "abs_end": 1899.03,
+      "text": "I'LL BUT WE HAVE S WHATEVER",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 15.48,
+      "end": 16.56,
+      "abs_begin": 1899.03,
+      "abs_end": 1900.11,
+      "text": "WHAT'S YOU WHAT WOULD YOU PREFER",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 15.59,
+      "end": 16.58,
+      "abs_begin": 1899.14,
+      "abs_end": 1900.13,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 16.58,
+      "end": 18.42,
+      "abs_begin": 1900.13,
+      "abs_end": 1901.97,
+      "text": "OR THREE THIRTY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 18.42,
+      "end": 19.9,
+      "abs_begin": 1901.97,
+      "abs_end": 1903.45,
+      "text": "NO JUST YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 19.86,
+      "end": 20.76,
+      "abs_begin": 1903.41,
+      "abs_end": 1904.31,
+      "text": "WELL IT DOESN'T MATTER FOR ME",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 19.9,
+      "end": 21.94,
+      "abs_begin": 1903.45,
+      "abs_end": 1905.49,
+      "text": "THAT'D BE NECESSARILY NECESSARILY SHORT",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 20.2,
+      "end": 21.12,
+      "abs_begin": 1903.75,
+      "abs_end": 1904.67,
+      "text": "THAT'S GONNA BE TIGHT",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 20.76,
+      "end": 23.03,
+      "abs_begin": 1904.31,
+      "abs_end": 1906.58,
+      "text": "I MEAN THREE THREE OR AFTER WHAT",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 21.14,
+      "end": 27.78,
+      "abs_begin": 1904.69,
+      "abs_end": 1911.33,
+      "text": "WE COULD THREE THIRTY IN THE IN THE COMPUTER ROOM IN HERE AND THEN WE CAN JUST GO STRA IF YOU CAN'T CAN YOU GET IN THE FRONT DOOR",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 23.72,
+      "end": 25.21,
+      "abs_begin": 1907.27,
+      "abs_end": 1908.76,
+      "text": "ACTUALLY WE CAN'T GET IN THERE THOUGH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 26.96,
+      "end": 27.5,
+      "abs_begin": 1910.51,
+      "abs_end": 1911.05,
+      "text": "MAYBE WE CA",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 27.78,
+      "end": 29.35,
+      "abs_begin": 1911.33,
+      "abs_end": 1912.9,
+      "text": "OH YOU HAVEN'T GOT A KEY DO YOU",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 29.05,
+      "end": 34.36,
+      "abs_begin": 1912.6,
+      "abs_end": 1917.91,
+      "text": "W WE WELL WE CAN GET IN THROUGH THE THROUGH THE THE CARD THE CARD DOOR",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 29.35,
+      "end": 30.19,
+      "abs_begin": 1912.9,
+      "abs_end": 1913.74,
+      "text": "CAN NONE OF YOU GET IN THERE",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 30.38,
+      "end": 31.58,
+      "abs_begin": 1913.93,
+      "abs_end": 1915.13,
+      "text": "YEAH IT WHAT FRONT DOOR",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 32.25,
+      "end": 37.34,
+      "abs_begin": 1915.8,
+      "abs_end": 1920.89,
+      "text": "THE K THE F THERE'S COMPUTER ROOMS IN HERE THE M. S. C. COMPUTER LAB AND UH IS IN HERE",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 32.75,
+      "end": 33.53,
+      "abs_begin": 1916.3,
+      "abs_end": 1917.08,
+      "text": "IN FOUR BUCCLEUCH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 34.36,
+      "end": 34.55,
+      "abs_begin": 1917.91,
+      "abs_end": 1918.1,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 35.07,
+      "end": 36.25,
+      "abs_begin": 1918.62,
+      "abs_end": 1919.8,
+      "text": "I'VE NOT FOUND THAT YET",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 36.49,
+      "end": 40.18,
+      "abs_begin": 1920.04,
+      "abs_end": 1923.73,
+      "text": "HOW ABOUT IF WE TAKE UH A TOUR",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 37.34,
+      "end": 43.45,
+      "abs_begin": 1920.89,
+      "abs_end": 1927.0,
+      "text": "WELL IF YOU FIND ME I'LL SHOW YOU WHERE I'LL I'LL LET US ALL IN THERE AND WE CAN ALL GO IN THERE",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 38.87,
+      "end": 44.2,
+      "abs_begin": 1922.42,
+      "abs_end": 1927.75,
+      "text": "WE CAN GO LOOK WE CAN LOOK AT NOW AFTERWARDS",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 40.18,
+      "end": 43.27,
+      "abs_begin": 1923.73,
+      "abs_end": 1926.82,
+      "text": "YEAH RIGHT",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 43.27,
+      "end": 44.26,
+      "abs_begin": 1926.82,
+      "abs_end": 1927.81,
+      "text": "YEAH YEAH EXACTLY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 43.45,
+      "end": 44.36,
+      "abs_begin": 1927.0,
+      "abs_end": 1927.91,
+      "text": "YEAH YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 44.2,
+      "end": 44.54,
+      "abs_begin": 1927.75,
+      "abs_end": 1928.09,
+      "text": "YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 44.36,
+      "end": 45.58,
+      "abs_begin": 1927.91,
+      "abs_end": 1929.13,
+      "text": "YOU DO NEED TO HAVE A KEY FOR IT",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 45.58,
+      "end": 46.17,
+      "abs_begin": 1929.13,
+      "abs_end": 1929.72,
+      "text": "LIKE THAT'S THE THING",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 46.17,
+      "end": 47.27,
+      "abs_begin": 1929.72,
+      "abs_end": 1930.82,
+      "text": "IT'S GOT A LOCK DOOR BUTTON",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 46.2,
+      "end": 47.32,
+      "abs_begin": 1929.75,
+      "abs_end": 1930.87,
+      "text": "OKAY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 46.31,
+      "end": 46.65,
+      "abs_begin": 1929.86,
+      "abs_end": 1930.2,
+      "text": "OKAY",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 47.32,
+      "end": 49.24,
+      "abs_begin": 1930.87,
+      "abs_end": 1932.79,
+      "text": "JUST SORT BANG ON IT",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 48.66,
+      "end": 49.71,
+      "abs_begin": 1932.21,
+      "abs_end": 1933.26,
+      "text": "YEAH SOMEBODY WILL ANSWER IT",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 49.24,
+      "end": 52.07,
+      "abs_begin": 1932.79,
+      "abs_end": 1935.62,
+      "text": "ACTUALLY I WAS ASKING STEVE ABOUT THAT WHETHER WE CAN GET IN THERE",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 52.07,
+      "end": 54.02,
+      "abs_begin": 1935.62,
+      "abs_end": 1937.57,
+      "text": "WHETHER HE WAS GONNA GET US ACCESS INTO THE",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 54.5,
+      "end": 55.8,
+      "abs_begin": 1938.05,
+      "abs_end": 1939.35,
+      "text": "INTO WHAT",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 55.14,
+      "end": 55.67,
+      "abs_begin": 1938.69,
+      "abs_end": 1939.22,
+      "text": "THE COMPUTER ROOM",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 55.8,
+      "end": 56.73,
+      "abs_begin": 1939.35,
+      "abs_end": 1940.28,
+      "text": "OKAY UH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 56.82,
+      "end": 61.25,
+      "abs_begin": 1940.37,
+      "abs_end": 1944.8,
+      "text": "YEAH IT'S ONLY GOT IT'S CRAP IT'S ONLY GOT ABOUT FOUR OR FIVE COMPUTERS IN BUT IT WOULD DO QUITE GOOD FOR OUR JOB",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 59.4,
+      "end": 60.16,
+      "abs_begin": 1942.95,
+      "abs_end": 1943.71,
+      "text": "YEAH PRINT",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 61.25,
+      "end": 64.41,
+      "abs_begin": 1944.8,
+      "abs_end": 1947.96,
+      "text": "'CAUSE IT HAS NOT VERY UH P NOT MANY PEOPLE IN IT VERY OFTEN",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 61.56,
+      "end": 61.83,
+      "abs_begin": 1945.11,
+      "abs_end": 1945.38,
+      "text": "OKAY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 64.21,
+      "end": 64.65,
+      "abs_begin": 1947.76,
+      "abs_end": 1948.2,
+      "text": "YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 64.38,
+      "end": 65.17,
+      "abs_begin": 1947.93,
+      "abs_end": 1948.72,
+      "text": "RIGHT",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 65.17,
+      "end": 66.06,
+      "abs_begin": 1948.72,
+      "abs_end": 1949.61,
+      "text": "IS THERE A PRINTER IN THERE TOO",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 66.21,
+      "end": 67.0,
+      "abs_begin": 1949.76,
+      "abs_end": 1950.55,
+      "text": "YEAH THERE'S FRIDGE THERE",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 67.0,
+      "end": 71.17,
+      "abs_begin": 1950.55,
+      "abs_end": 1954.72,
+      "text": "AND THERE'S A PHOTO COPIER WITH THE CODE ON IT YEAH YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 69.13,
+      "end": 69.52,
+      "abs_begin": 1952.68,
+      "abs_end": 1953.07,
+      "text": "REALLY",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 70.39,
+      "end": 71.82,
+      "abs_begin": 1953.94,
+      "abs_end": 1955.37,
+      "text": "A NICE OKAY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 71.17,
+      "end": 75.22,
+      "abs_begin": 1954.72,
+      "abs_end": 1958.77,
+      "text": "IT'S COOL YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 71.17,
+      "end": 71.63,
+      "abs_begin": 1954.72,
+      "abs_end": 1955.18,
+      "text": "REALLY",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 71.82,
+      "end": 73.17,
+      "abs_begin": 1955.37,
+      "abs_end": 1956.72,
+      "text": "THAT WOULD COME IN HANDY YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 73.23,
+      "end": 74.18,
+      "abs_begin": 1956.78,
+      "abs_end": 1957.73,
+      "text": "AH",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 74.1,
+      "end": 77.05,
+      "abs_begin": 1957.65,
+      "abs_end": 1960.6,
+      "text": "OH IS THAT THE PHOTO COPIER I HEARD I HEARD ABOUT",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 74.18,
+      "end": 75.03,
+      "abs_begin": 1957.73,
+      "abs_end": 1958.58,
+      "text": "WELL I'M JUST",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 74.19,
+      "end": 80.51,
+      "abs_begin": 1957.74,
+      "abs_end": 1964.06,
+      "text": "HEY WE COULD WE COULD PHOTO COPY OUR UM ASSIGNMENT IF WE WANTED TO",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 77.05,
+      "end": 77.34,
+      "abs_begin": 1960.6,
+      "abs_end": 1960.89,
+      "text": "YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 77.25,
+      "end": 80.68,
+      "abs_begin": 1960.8,
+      "abs_end": 1964.23,
+      "text": "I'VE GOT IT IN MY COMPUTER",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 79.47,
+      "end": 79.69,
+      "abs_begin": 1963.02,
+      "abs_end": 1963.24,
+      "text": "YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 80.51,
+      "end": 80.76,
+      "abs_begin": 1964.06,
+      "abs_end": 1964.31,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 80.68,
+      "end": 81.69,
+      "abs_begin": 1964.23,
+      "abs_end": 1965.24,
+      "text": "WHATEVER IS IN MY COMPUTER",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 80.76,
+      "end": 82.2,
+      "abs_begin": 1964.31,
+      "abs_end": 1965.75,
+      "text": "WELL THE COMMENTS I'M THINKING",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 80.76,
+      "end": 81.09,
+      "abs_begin": 1964.31,
+      "abs_end": 1964.64,
+      "text": "YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 82.34,
+      "end": 84.1,
+      "abs_begin": 1965.89,
+      "abs_end": 1967.65,
+      "text": "SO WHAT TIME DO WE SAY",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 84.52,
+      "end": 86.05,
+      "abs_begin": 1968.07,
+      "abs_end": 1969.6,
+      "text": "I JUST THINK IT'S BETTER TO DO IT AFTERWARDS",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 84.53,
+      "end": 84.9,
+      "abs_begin": 1968.08,
+      "abs_end": 1968.45,
+      "text": "UM",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 86.05,
+      "end": 87.8,
+      "abs_begin": 1969.6,
+      "abs_end": 1971.35,
+      "text": "THEN WE HAVE ALL THE TIME WE NEED",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 87.08,
+      "end": 87.7,
+      "abs_begin": 1970.63,
+      "abs_end": 1971.25,
+      "text": "YEAH THAT'S TRUE",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 87.46,
+      "end": 87.77,
+      "abs_begin": 1971.01,
+      "abs_end": 1971.32,
+      "text": "OH RIGHT",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 87.7,
+      "end": 89.65,
+      "abs_begin": 1971.25,
+      "abs_end": 1973.2,
+      "text": "SO AFTER D. N. L. G.",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 87.8,
+      "end": 90.58,
+      "abs_begin": 1971.35,
+      "abs_end": 1974.13,
+      "text": "RATHER THAN HAVE HALF AN HOUR AND THEN WE'LL SURELY RUN OUT",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 87.82,
+      "end": 88.65,
+      "abs_begin": 1971.37,
+      "abs_end": 1972.2,
+      "text": "YEAH YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 89.61,
+      "end": 90.12,
+      "abs_begin": 1973.16,
+      "abs_end": 1973.67,
+      "text": "YEAH YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 89.65,
+      "end": 89.96,
+      "abs_begin": 1973.2,
+      "abs_end": 1973.51,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 89.76,
+      "end": 93.54,
+      "abs_begin": 1973.31,
+      "abs_end": 1977.09,
+      "text": "YEAH YEAH YEAH",
+      "speaker": "FEO070",
+      "words": []
+    }
+  ]
+}

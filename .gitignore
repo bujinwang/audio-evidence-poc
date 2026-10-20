@@ -1,0 +1,47 @@
+# python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+*.egg-info/
+
+# node
+node_modules/
+dist/
+.vite/
+
+# environment
+.env
+.env.local
+
+# data: never commit evidence, derivatives, or the demo database
+data/app.db
+data/app.db-*
+data/originals/
+data/working/
+data/denoised/
+data/exports/
+!data/samples/
+
+# os
+.DS_Store
+
+# tool caches
+.ruff_cache/
+
+# generated TTS cache (regenerable)
+data/samples/.tts-cache/
+
+# Large real-audio binaries. The transcripts, scripts and README are committed
+# so the measurement is reproducible; the 33 MB press-conference audio is not.
+# Regenerate with yt-dlp — see data/real-audio/eps-presser/README.md
+data/real-audio/eps-presser/*.flac
+data/real-audio/eps-presser/*.wav
+data/real-audio/eps-presser/words.json
+
+# Internal commercial strategy, written about a live client relationship.
+# Kept on disk, never published: it contains a ranked build plan and a meeting
+# script for a specific company, which is not something to have indexed under
+# your own name while that relationship is active.
+docs/TECHNOLOGY_NORTH_GAP_ANALYSIS.md
+

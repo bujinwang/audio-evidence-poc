@@ -1,0 +1,20 @@
+# Optional ASR / denoising / semantic stack.
+# Install only what you need; the app degrades gracefully without these.
+#
+#   pip install -r requirements-asr.txt            # full stack
+#   pip install faster-whisper                      # transcription only (CPU, ~60 MB)
+#   pip install deepfilternet                       # denoising only
+#   pip install sentence-transformers               # real semantic embeddings
+#
+# WhisperX pulls torch + pyannote; expect a large download and a GPU for speed.
+whisperx>=3.3
+faster-whisper>=1.2
+# PyAV 19 removed the `metadata_errors` argument from av.open(), which
+# faster-whisper 1.2.1 still passes — every transcription fails with a TypeError.
+# Pin below 19 until faster-whisper catches up.
+av>=11,<19
+# Denoising: prefer the standalone `deepFilter` binary over this package.
+# This pin drags numpy<2, downgrading the whole environment for one optional
+# stage. See README → "Denoising (DeepFilterNet)" for the binary install.
+# deepfilternet>=0.5.6
+sentence-transformers>=3.0

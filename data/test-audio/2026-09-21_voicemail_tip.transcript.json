@@ -1,0 +1,259 @@
+{
+  "language": "en",
+  "source": "synthetic-noisy-test-set",
+  "note": "Reference transcript for a synthetic voicemail_tape recording at 14 dB SNR (applied, not estimated). Timestamps are exact: each line was synthesised separately and noise was mixed on the same timeline.",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 3.744,
+      "text": "This is a message for the detective handling the King Street case.",
+      "speaker": "SPEAKER_17",
+      "words": [
+        {
+          "w": "This",
+          "start": 0.0,
+          "end": 0.279
+        },
+        {
+          "w": "is",
+          "start": 0.279,
+          "end": 0.447
+        },
+        {
+          "w": "a",
+          "start": 0.447,
+          "end": 0.559
+        },
+        {
+          "w": "message",
+          "start": 0.559,
+          "end": 1.006
+        },
+        {
+          "w": "for",
+          "start": 1.006,
+          "end": 1.229
+        },
+        {
+          "w": "the",
+          "start": 1.229,
+          "end": 1.453
+        },
+        {
+          "w": "detective",
+          "start": 1.453,
+          "end": 2.012
+        },
+        {
+          "w": "handling",
+          "start": 2.012,
+          "end": 2.515
+        },
+        {
+          "w": "the",
+          "start": 2.515,
+          "end": 2.738
+        },
+        {
+          "w": "King",
+          "start": 2.738,
+          "end": 3.018
+        },
+        {
+          "w": "Street",
+          "start": 3.018,
+          "end": 3.409
+        },
+        {
+          "w": "case.",
+          "start": 3.409,
+          "end": 3.744
+        }
+      ]
+    },
+    {
+      "start": 4.194,
+      "end": 8.394,
+      "text": "I saw the truck again, parked behind the arena on Mill Road.",
+      "speaker": "SPEAKER_17",
+      "words": [
+        {
+          "w": "I",
+          "start": 4.194,
+          "end": 4.332
+        },
+        {
+          "w": "saw",
+          "start": 4.332,
+          "end": 4.607
+        },
+        {
+          "w": "the",
+          "start": 4.607,
+          "end": 4.883
+        },
+        {
+          "w": "truck",
+          "start": 4.883,
+          "end": 5.296
+        },
+        {
+          "w": "again,",
+          "start": 5.296,
+          "end": 5.778
+        },
+        {
+          "w": "parked",
+          "start": 5.778,
+          "end": 6.26
+        },
+        {
+          "w": "behind",
+          "start": 6.26,
+          "end": 6.742
+        },
+        {
+          "w": "the",
+          "start": 6.742,
+          "end": 7.017
+        },
+        {
+          "w": "arena",
+          "start": 7.017,
+          "end": 7.43
+        },
+        {
+          "w": "on",
+          "start": 7.43,
+          "end": 7.637
+        },
+        {
+          "w": "Mill",
+          "start": 7.637,
+          "end": 7.981
+        },
+        {
+          "w": "Road.",
+          "start": 7.981,
+          "end": 8.394
+        }
+      ]
+    },
+    {
+      "start": 8.844,
+      "end": 12.708,
+      "text": "It has a silver toolbox in the back and a cracked rear window.",
+      "speaker": "SPEAKER_17",
+      "words": [
+        {
+          "w": "It",
+          "start": 8.844,
+          "end": 9.028
+        },
+        {
+          "w": "has",
+          "start": 9.028,
+          "end": 9.273
+        },
+        {
+          "w": "a",
+          "start": 9.273,
+          "end": 9.396
+        },
+        {
+          "w": "silver",
+          "start": 9.396,
+          "end": 9.825
+        },
+        {
+          "w": "toolbox",
+          "start": 9.825,
+          "end": 10.316
+        },
+        {
+          "w": "in",
+          "start": 10.316,
+          "end": 10.5
+        },
+        {
+          "w": "the",
+          "start": 10.5,
+          "end": 10.745
+        },
+        {
+          "w": "back",
+          "start": 10.745,
+          "end": 11.052
+        },
+        {
+          "w": "and",
+          "start": 11.052,
+          "end": 11.297
+        },
+        {
+          "w": "a",
+          "start": 11.297,
+          "end": 11.42
+        },
+        {
+          "w": "cracked",
+          "start": 11.42,
+          "end": 11.911
+        },
+        {
+          "w": "rear",
+          "start": 11.911,
+          "end": 12.217
+        },
+        {
+          "w": "window.",
+          "start": 12.217,
+          "end": 12.708
+        }
+      ]
+    },
+    {
+      "start": 13.158,
+      "end": 15.366,
+      "text": "I would rather not leave my name.",
+      "speaker": "SPEAKER_17",
+      "words": [
+        {
+          "w": "I",
+          "start": 13.158,
+          "end": 13.288
+        },
+        {
+          "w": "would",
+          "start": 13.288,
+          "end": 13.678
+        },
+        {
+          "w": "rather",
+          "start": 13.678,
+          "end": 14.132
+        },
+        {
+          "w": "not",
+          "start": 14.132,
+          "end": 14.392
+        },
+        {
+          "w": "leave",
+          "start": 14.392,
+          "end": 14.782
+        },
+        {
+          "w": "my",
+          "start": 14.782,
+          "end": 14.976
+        },
+        {
+          "w": "name.",
+          "start": 14.976,
+          "end": 15.366
+        }
+      ]
+    }
+  ]
+}

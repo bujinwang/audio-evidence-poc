@@ -1,0 +1,131 @@
+[
+  {
+    "slug": "911-shop-lot",
+    "audio": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-02_911_call_shop-lot.wav",
+    "sidecar": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-02_911_call_shop-lot.transcript.json",
+    "filename": "2026-09-02_911_call_shop-lot.wav",
+    "source_type": "phone_call",
+    "recorded_at": "2026-09-02T21:14:00-06:00",
+    "duration_s": 38.75,
+    "segments": 9,
+    "noise": "phone_line",
+    "note": "Telephony channel: 300-3400 Hz band, line hum, muffled TV in the room.",
+    "snr_db_target": 12.0,
+    "snr_db_applied": 12.0,
+    "bandpass_hz": [
+      300.0,
+      3400.0
+    ],
+    "providers": {
+      "edge": 9
+    },
+    "sha256": "117c1734f234f4454242a20d43cdad3ebfaf678d8a36240c491483f521869fe5"
+  },
+  {
+    "slug": "bodycam-traffic-stop",
+    "audio": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-05_bodycam_traffic-stop.wav",
+    "sidecar": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-05_bodycam_traffic-stop.transcript.json",
+    "filename": "2026-09-05_bodycam_traffic-stop.wav",
+    "source_type": "bodycam",
+    "recorded_at": "2026-09-05T23:48:00-06:00",
+    "duration_s": 29.05,
+    "segments": 7,
+    "noise": "bodycam_street",
+    "note": "Street: passing vehicles, wind buffet, mic saturation on peaks.",
+    "snr_db_target": 8.0,
+    "snr_db_applied": 8.0,
+    "bandpass_hz": null,
+    "providers": {
+      "edge": 7
+    },
+    "sha256": "d2a6a3e1dba758886b20878839315d97d3727cdf4d87fd40b929fb1132f48394"
+  },
+  {
+    "slug": "interview-room-hvac",
+    "audio": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-11_interview_room_hvac.wav",
+    "sidecar": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-11_interview_room_hvac.transcript.json",
+    "filename": "2026-09-11_interview_room_hvac.wav",
+    "source_type": "interview",
+    "recorded_at": "2026-09-11T14:05:00-06:00",
+    "duration_s": 22.15,
+    "segments": 6,
+    "noise": "interview_room",
+    "note": "Baseline: HVAC hum and room reverb, otherwise clean.",
+    "snr_db_target": 20.0,
+    "snr_db_applied": 20.0,
+    "bandpass_hz": [
+      80.0,
+      7000.0
+    ],
+    "providers": {
+      "edge": 6
+    },
+    "sha256": "79acd645ebbecfc2b3e4ea3dfb37fadc6d04998cfa1ef465261b9762f8524fe4"
+  },
+  {
+    "slug": "canvass-door-knock",
+    "audio": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-14_canvass_door-knock.wav",
+    "sidecar": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-14_canvass_door-knock.transcript.json",
+    "filename": "2026-09-14_canvass_door-knock.wav",
+    "source_type": "other",
+    "recorded_at": "2026-09-14T17:32:00-06:00",
+    "duration_s": 27.43,
+    "segments": 6,
+    "noise": "outdoor_canvass",
+    "note": "Outdoors: wind, distant traffic, a quiet elderly voice.",
+    "snr_db_target": 6.0,
+    "snr_db_applied": 6.0,
+    "bandpass_hz": [
+      90.0,
+      6500.0
+    ],
+    "providers": {
+      "edge": 6
+    },
+    "sha256": "98c969bc59d24ef2df0d889b62fbaf27776da3ae5da90f721da7cab0848161a2"
+  },
+  {
+    "slug": "warehouse-loading-dock",
+    "audio": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-18_warehouse_loading-dock.wav",
+    "sidecar": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-18_warehouse_loading-dock.transcript.json",
+    "filename": "2026-09-18_warehouse_loading-dock.wav",
+    "source_type": "other",
+    "recorded_at": "2026-09-18T00:20:00-06:00",
+    "duration_s": 16.63,
+    "segments": 4,
+    "noise": "warehouse",
+    "note": "Hardest: machinery hum, metal clanks, heavy reverb at 4 dB.",
+    "snr_db_target": 4.0,
+    "snr_db_applied": 4.0,
+    "bandpass_hz": [
+      60.0,
+      7000.0
+    ],
+    "providers": {
+      "edge": 4
+    },
+    "sha256": "e0088e9cd17dc1865db2ac24513dd4b8ffeee34b6253a72397d11b016bff7aeb"
+  },
+  {
+    "slug": "voicemail-tip",
+    "audio": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-21_voicemail_tip.wav",
+    "sidecar": "/Users/bujin/WorkBuddy AI/2026-10-19-16-19-11/audio-evidence-poc/data/test-audio/2026-09-21_voicemail_tip.transcript.json",
+    "filename": "2026-09-21_voicemail_tip.wav",
+    "source_type": "phone_call",
+    "recorded_at": "2026-09-21T08:02:00-06:00",
+    "duration_s": 15.82,
+    "segments": 4,
+    "noise": "voicemail_tape",
+    "note": "Voicemail: tape hiss, line noise, one speaker, no turn changes.",
+    "snr_db_target": 14.0,
+    "snr_db_applied": 14.0,
+    "bandpass_hz": [
+      300.0,
+      3400.0
+    ],
+    "providers": {
+      "edge": 4
+    },
+    "sha256": "21be10f7d6eca22a143a0951e9cd94aa5bf42dc91e950780eea351f837c2588d"
+  }
+]

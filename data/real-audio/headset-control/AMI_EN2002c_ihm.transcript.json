@@ -1,0 +1,241 @@
+{
+  "language": "en",
+  "source": "ami-corpus-ihm",
+  "note": "Human transcript from the AMI Meeting Corpus annotations. Audio is reconstructed: corpus utterances placed at their annotated offsets, with silence between them.",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 0.65,
+      "abs_begin": 468.34,
+      "abs_end": 468.99,
+      "text": "YEP",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 0.65,
+      "end": 2.1,
+      "abs_begin": 468.99,
+      "abs_end": 470.44,
+      "text": "YEAH YEAH THAT WOULD BE EASY AS WELL YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 1.97,
+      "end": 3.29,
+      "abs_begin": 470.31,
+      "abs_end": 471.63,
+      "text": "SO DO YOU WANNA DO THAT THEN",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 8.81,
+      "end": 10.09,
+      "abs_begin": 477.15,
+      "abs_end": 478.43,
+      "text": "YEAH",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 9.43,
+      "end": 11.96,
+      "abs_begin": 477.77,
+      "abs_end": 480.3,
+      "text": "THAT'LL BE THE EASIEST WAY TO DO YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 18.06,
+      "end": 18.4,
+      "abs_begin": 486.4,
+      "abs_end": 486.74,
+      "text": "OR",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 21.39,
+      "end": 21.71,
+      "abs_begin": 489.73,
+      "abs_end": 490.05,
+      "text": "GOOD",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 23.9,
+      "end": 28.89,
+      "abs_begin": 492.24,
+      "abs_end": 497.23,
+      "text": "SO EACH TIME ARE YOU GOING STRAIGHT TO THE X. M. L. FILES FOR FOR THE INFORMATION OR RIGHT",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 28.89,
+      "end": 29.23,
+      "abs_begin": 497.23,
+      "abs_end": 497.57,
+      "text": "OH WELL",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 31.31,
+      "end": 31.7,
+      "abs_begin": 499.65,
+      "abs_end": 500.04,
+      "text": "OKAY RIGHT",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 34.24,
+      "end": 35.88,
+      "abs_begin": 502.58,
+      "abs_end": 504.22,
+      "text": "RIGHT OKAY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 37.27,
+      "end": 38.37,
+      "abs_begin": 505.61,
+      "abs_end": 506.71,
+      "text": "YEAH IT'S ALL PRE PROCESSED",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 40.76,
+      "end": 42.21,
+      "abs_begin": 509.1,
+      "abs_end": 510.55,
+      "text": "OKAY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 41.59,
+      "end": 42.82,
+      "abs_begin": 509.93,
+      "abs_end": 511.16,
+      "text": "YOU HAVE TO G RE CREATE THE OBJECT",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 44.71,
+      "end": 49.35,
+      "abs_begin": 513.05,
+      "abs_end": 517.69,
+      "text": "SO WHAT YOU DO IS YOU CALL A NULL CONSTRUCTOR 'CAUSE IF YOU CALL THE TH PROPER CONSTRUCTOR FOR EACH MEETING",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 58.15,
+      "end": 59.77,
+      "abs_begin": 526.49,
+      "abs_end": 528.11,
+      "text": "RIGHT",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 62.98,
+      "end": 63.12,
+      "abs_begin": 531.32,
+      "abs_end": 531.46,
+      "text": "YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 67.06,
+      "end": 68.52,
+      "abs_begin": 535.4,
+      "abs_end": 536.86,
+      "text": "OH EACH MEETING OKAY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 68.49,
+      "end": 69.78,
+      "abs_begin": 536.83,
+      "abs_end": 538.12,
+      "text": "ALTHOUGH YEAH YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 70.85,
+      "end": 72.98,
+      "abs_begin": 539.19,
+      "abs_end": 541.32,
+      "text": "WONDER IF THAT WOULD BE USEFUL FOR SOME OF THE OTHER STUFF WE'RE DOING",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 72.98,
+      "end": 74.9,
+      "abs_begin": 541.32,
+      "abs_end": 543.24,
+      "text": "WELL YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 75.21,
+      "end": 77.27,
+      "abs_begin": 543.55,
+      "abs_end": 545.61,
+      "text": "IT'S JUST TELL IT TELLS YOU WHO PARTICIPATED",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 75.51,
+      "end": 75.98,
+      "abs_begin": 543.85,
+      "abs_end": 544.32,
+      "text": "JUST",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 82.15,
+      "end": 82.5,
+      "abs_begin": 550.49,
+      "abs_end": 550.84,
+      "text": "OKAY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 86.42,
+      "end": 89.95,
+      "abs_begin": 554.76,
+      "abs_end": 558.29,
+      "text": "THEN I COULD USE THAT FOR THE FOR THE TOPIC POP UP WINDOW",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 86.68,
+      "end": 86.91,
+      "abs_begin": 555.02,
+      "abs_end": 555.25,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+# Runtime dependencies (CPU-only demo)
+fastapi>=0.115,<1.0
+uvicorn[standard]>=0.30
+sqlalchemy>=2.0.30
+pydantic>=2.7
+python-multipart>=0.0.9
+numpy>=1.26
+psycopg[binary]>=3.1.18
+qdrant-client>=1.9

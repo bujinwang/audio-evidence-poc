@@ -1,0 +1,718 @@
+{
+  "language": "en",
+  "source": "ami-corpus-ihm",
+  "note": "Human transcript from the AMI Meeting Corpus annotations. Audio is reconstructed: corpus utterances placed at their annotated offsets, with silence between them.",
+  "segments": [
+    {
+      "start": 0.0,
+      "end": 0.48,
+      "abs_begin": 411.12,
+      "abs_end": 411.6,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 0.48,
+      "end": 1.74,
+      "abs_begin": 411.6,
+      "abs_end": 412.86,
+      "text": "THIS THIS AND THIS",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 1.4,
+      "end": 3.93,
+      "abs_begin": 412.52,
+      "abs_end": 415.05,
+      "text": "M M MEET THESE MILESTONES AT YEAH",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 1.74,
+      "end": 4.54,
+      "abs_begin": 412.86,
+      "abs_end": 415.66,
+      "text": "OR SOME OF THEM WERE LATER SOME WERE YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 4.21,
+      "end": 5.15,
+      "abs_begin": 415.33,
+      "abs_end": 416.27,
+      "text": "YEAH THAT'S A GOOD IDEA",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 4.54,
+      "end": 5.19,
+      "abs_begin": 415.66,
+      "abs_end": 416.31,
+      "text": "WE COULD EVEN",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 5.15,
+      "end": 6.72,
+      "abs_begin": 416.27,
+      "abs_end": 417.84,
+      "text": "YOU HAVE SHOULD HAVE A SECTION PROBABLY",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 6.39,
+      "end": 8.26,
+      "abs_begin": 417.51,
+      "abs_end": 419.38,
+      "text": "I MEAN WE HAVEN'T REALLY YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 6.46,
+      "end": 8.08,
+      "abs_begin": 417.58,
+      "abs_end": 419.2,
+      "text": "LIKE YOU KNOW DEVELOP PROTOTYPE GUI",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 6.82,
+      "end": 7.15,
+      "abs_begin": 417.94,
+      "abs_end": 418.27,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 8.08,
+      "end": 13.23,
+      "abs_begin": 419.2,
+      "abs_end": 424.35,
+      "text": "WE T YOU KNOW AH YEAH WE MANAGED THAT NICELY",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 8.56,
+      "end": 8.85,
+      "abs_begin": 419.68,
+      "abs_end": 419.97,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 9.34,
+      "end": 9.67,
+      "abs_begin": 420.46,
+      "abs_end": 420.79,
+      "text": "YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 10.2,
+      "end": 12.39,
+      "abs_begin": 421.32,
+      "abs_end": 423.51,
+      "text": "EXACTLY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 12.39,
+      "end": 12.56,
+      "abs_begin": 423.51,
+      "abs_end": 423.68,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 12.63,
+      "end": 14.88,
+      "abs_begin": 423.75,
+      "abs_end": 426.0,
+      "text": "THE BEST FILE ON TARGET OR SOMETHING",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 13.23,
+      "end": 13.38,
+      "abs_begin": 424.35,
+      "abs_end": 424.5,
+      "text": "UH",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 14.47,
+      "end": 15.42,
+      "abs_begin": 425.59,
+      "abs_end": 426.54,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 14.97,
+      "end": 16.07,
+      "abs_begin": 426.09,
+      "abs_end": 427.19,
+      "text": "YEAH YEAH",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 15.05,
+      "end": 38.38,
+      "abs_begin": 426.17,
+      "abs_end": 449.5,
+      "text": "HE HE D HE DOESN'T HAVE TO KNOW EXACTLY WHAT I MEAN YEAH M I MEAN IT'S HOT FINISHED BUT IT DOESN'T REALLY SAY",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 15.42,
+      "end": 16.79,
+      "abs_begin": 426.54,
+      "abs_end": 427.91,
+      "text": "MORE OR LESS",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 16.07,
+      "end": 17.44,
+      "abs_begin": 427.19,
+      "abs_end": 428.56,
+      "text": "YEAH PUT IT PUT IT GOOD",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 16.79,
+      "end": 17.69,
+      "abs_begin": 427.91,
+      "abs_end": 428.81,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 16.89,
+      "end": 24.96,
+      "abs_begin": 428.01,
+      "abs_end": 436.08,
+      "text": "OR T WELL",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 17.69,
+      "end": 18.56,
+      "abs_begin": 428.81,
+      "abs_end": 429.68,
+      "text": "SEARCH YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 18.56,
+      "end": 22.39,
+      "abs_begin": 429.68,
+      "abs_end": 433.51,
+      "text": "P PLUS PLUS OR MINUS THREE DAYS TO YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 22.39,
+      "end": 23.93,
+      "abs_begin": 433.51,
+      "abs_end": 435.05,
+      "text": "YEAH THAT'S THAT THAT'S TRUE TOO",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 23.93,
+      "end": 26.74,
+      "abs_begin": 435.05,
+      "abs_end": 437.86,
+      "text": "THAT'S TRUE YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 28.94,
+      "end": 31.39,
+      "abs_begin": 440.06,
+      "abs_end": 442.51,
+      "text": "CONCEPTUALLY",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 29.93,
+      "end": 32.68,
+      "abs_begin": 441.05,
+      "abs_end": 443.8,
+      "text": "AND SO I'VE ONLY GOT SIX DAYS TO DO THE TOPIC SEGMENTATION AS WELL",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 32.19,
+      "end": 35.12,
+      "abs_begin": 443.31,
+      "abs_end": 446.24,
+      "text": "AH THAT'S PLENTY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 32.68,
+      "end": 34.83,
+      "abs_begin": 443.8,
+      "abs_end": 445.95,
+      "text": "JESUS",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 35.12,
+      "end": 39.52,
+      "abs_begin": 446.24,
+      "abs_end": 450.64,
+      "text": "YOU DON'T HAVE ANY UH S. P. N. L. P. ASSIGNMENTS DO YOU",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 37.57,
+      "end": 40.76,
+      "abs_begin": 448.69,
+      "abs_end": 451.88,
+      "text": "YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 40.76,
+      "end": 41.37,
+      "abs_begin": 451.88,
+      "abs_end": 452.49,
+      "text": "UH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 41.01,
+      "end": 43.16,
+      "abs_begin": 452.13,
+      "abs_end": 454.28,
+      "text": "AND YOU CAN SAY YEAH",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 43.16,
+      "end": 49.12,
+      "abs_begin": 454.28,
+      "abs_end": 460.24,
+      "text": "WE UH SAY WE ARE STILL AIMING FOR THE DEVELOPMENT TO BE COMPLETE ON THE OR SOMETHING",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 43.27,
+      "end": 44.62,
+      "abs_begin": 454.39,
+      "abs_end": 455.74,
+      "text": "SPEAKER CHARACTERISATION",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 46.36,
+      "end": 46.9,
+      "abs_begin": 457.48,
+      "abs_end": 458.02,
+      "text": "JESUS",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 49.04,
+      "end": 52.12,
+      "abs_begin": 460.16,
+      "abs_end": 463.24,
+      "text": "SPEAKER CHARACTERISATION'S SUPPOSED TO BE DONE ALREADY",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 49.12,
+      "end": 49.76,
+      "abs_begin": 460.24,
+      "abs_end": 460.88,
+      "text": "M",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 49.46,
+      "end": 49.72,
+      "abs_begin": 460.58,
+      "abs_end": 460.84,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 51.26,
+      "end": 53.3,
+      "abs_begin": 462.38,
+      "abs_end": 464.42,
+      "text": "OH REALLY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 52.12,
+      "end": 54.63,
+      "abs_begin": 463.24,
+      "abs_end": 465.75,
+      "text": "YEAH TWO DAYS AGO",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 52.62,
+      "end": 53.27,
+      "abs_begin": 463.74,
+      "abs_end": 464.39,
+      "text": "WHOA",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 53.3,
+      "end": 53.9,
+      "abs_begin": 464.42,
+      "abs_end": 465.02,
+      "text": "OH JEEZ",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 53.9,
+      "end": 60.06,
+      "abs_begin": 465.02,
+      "abs_end": 471.18,
+      "text": "H UM IS ARE ONE OF THOSE SOMETHING THAT YOU WANNA CHANGE AND DELETE FROM OUR LIST OF EXPECTATIONS",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 61.86,
+      "end": 64.8,
+      "abs_begin": 472.98,
+      "abs_end": 475.92,
+      "text": "GIVE ME A WEEK AND I'LL TELL YOU THE ANSWER TO THAT",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 62.82,
+      "end": 63.24,
+      "abs_begin": 473.94,
+      "abs_end": 474.36,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 63.24,
+      "end": 63.84,
+      "abs_begin": 474.36,
+      "abs_end": 474.96,
+      "text": "OKAY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 63.73,
+      "end": 64.81,
+      "abs_begin": 474.85,
+      "abs_end": 475.93,
+      "text": "I YEAH I",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 63.84,
+      "end": 64.64,
+      "abs_begin": 474.96,
+      "abs_end": 475.76,
+      "text": "ALRIGHT",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 64.64,
+      "end": 67.86,
+      "abs_begin": 475.76,
+      "abs_end": 478.98,
+      "text": "LIKE SHOULD WE PUT I A HINT THAT SOMETHING LIKE THAT MIGHT HAPPEN INTO THE DOCUMENT",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 67.88,
+      "end": 70.33,
+      "abs_begin": 479.0,
+      "abs_end": 481.45,
+      "text": "OR MAYBE THE SPEAKER CHARACTERISATION MIGHT GET SLIMMER",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 70.77,
+      "end": 72.09,
+      "abs_begin": 481.89,
+      "abs_end": 483.21,
+      "text": "YEAH THAT'S RIGHT",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 70.82,
+      "end": 71.44,
+      "abs_begin": 481.94,
+      "abs_end": 482.56,
+      "text": "OKAY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 71.44,
+      "end": 72.09,
+      "abs_begin": 482.56,
+      "abs_end": 483.21,
+      "text": "ALRIGHT",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 72.09,
+      "end": 73.27,
+      "abs_begin": 483.21,
+      "abs_end": 484.39,
+      "text": "I I REALLY WANNA DO IT",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 72.09,
+      "end": 73.72,
+      "abs_begin": 483.21,
+      "abs_end": 484.84,
+      "text": "OKAY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 72.1,
+      "end": 74.68,
+      "abs_begin": 483.22,
+      "abs_end": 485.8,
+      "text": "PROBABLY WE WON'T DISAPPEAR IT YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 73.27,
+      "end": 75.66,
+      "abs_begin": 484.39,
+      "abs_end": 486.78,
+      "text": "I MEAN IT'S NOT IT'S NOT GONNA BE DIFFICULT",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 73.72,
+      "end": 74.49,
+      "abs_begin": 484.84,
+      "abs_end": 485.61,
+      "text": "YEAH I KNOW",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 74.49,
+      "end": 74.76,
+      "abs_begin": 485.61,
+      "abs_end": 485.88,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 75.66,
+      "end": 80.49,
+      "abs_begin": 486.78,
+      "abs_end": 491.61,
+      "text": "IF AT LEAST HAVE ALL THE INFORMATION POP UP THAT IS ALREADY IN THE META DATA FILE",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 80.18,
+      "end": 81.06,
+      "abs_begin": 491.3,
+      "abs_end": 492.18,
+      "text": "MM-HMM",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 80.49,
+      "end": 82.54,
+      "abs_begin": 491.61,
+      "abs_end": 493.66,
+      "text": "THAT'S GONNA BE NO WORK AT ALL",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 81.06,
+      "end": 81.65,
+      "abs_begin": 492.18,
+      "abs_end": 492.77,
+      "text": "YEAH OKAY",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 81.13,
+      "end": 81.66,
+      "abs_begin": 492.25,
+      "abs_end": 492.78,
+      "text": "YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 81.65,
+      "end": 82.31,
+      "abs_begin": 492.77,
+      "abs_end": 493.43,
+      "text": "YEAH TRUE",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 81.66,
+      "end": 82.07,
+      "abs_begin": 492.78,
+      "abs_end": 493.19,
+      "text": "YEAH",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 82.07,
+      "end": 82.2,
+      "abs_begin": 493.19,
+      "abs_end": 493.32,
+      "text": "YEP",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 82.31,
+      "end": 82.54,
+      "abs_begin": 493.43,
+      "abs_end": 493.66,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 82.54,
+      "end": 84.11,
+      "abs_begin": 493.66,
+      "abs_end": 495.23,
+      "text": "SO IT'S DEFINITELY GONNA BE SOMETHING THERE",
+      "speaker": "FEO072",
+      "words": []
+    },
+    {
+      "start": 84.22,
+      "end": 86.69,
+      "abs_begin": 495.34,
+      "abs_end": 497.81,
+      "text": "YEAH WE WON'T MAKE IT DISAPPEAR BUT WE MIGHT THIN IT DOWN A BIT",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 84.3,
+      "end": 85.27,
+      "abs_begin": 495.42,
+      "abs_end": 496.39,
+      "text": "OKAY SOUNDS GOOD",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 84.91,
+      "end": 85.06,
+      "abs_begin": 496.03,
+      "abs_end": 496.18,
+      "text": "YEAH",
+      "speaker": "FEO070",
+      "words": []
+    },
+    {
+      "start": 86.95,
+      "end": 87.15,
+      "abs_begin": 498.07,
+      "abs_end": 498.27,
+      "text": "YEAH",
+      "speaker": "MEE073",
+      "words": []
+    },
+    {
+      "start": 88.09,
+      "end": 89.83,
+      "abs_begin": 499.21,
+      "abs_end": 500.95,
+      "text": "UM BUT WE MIGHT NOT YOU KNOW BUT WE MIGHT HAVE TIME",
+      "speaker": "MEE071",
+      "words": []
+    },
+    {
+      "start": 89.83,
+      "end": 92.0,
+      "abs_begin": 500.95,
+      "abs_end": 503.12,
+      "text": "DEPENDS HOW HOW HOW HOW THINGS M",
+      "speaker": "MEE071",
+      "words": []
+    }
+  ]
+}

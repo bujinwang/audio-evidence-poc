@@ -1,0 +1,83 @@
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: evidence
+      POSTGRES_PASSWORD: evidence
+      POSTGRES_DB: evidence
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U evidence -d evidence"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    ports:
+      - "5432:5432"
+
+  qdrant:
+    image: qdrant/qdrant:v1.11.0
+    volumes:
+      - qdrant:/qdrant/storage
+    ports:
+      - "6333:6333"
+
+  api:
+    build:
+      context: ./backend
+      args:
+        INSTALL_ASR: "false"
+    environment:
+      APP_ENV: docker
+      DATA_DIR: /data
+      DATABASE_URL: postgresql+psycopg://evidence:evidence@db:5432/evidence
+      QDRANT_URL: http://qdrant:6333
+      QDRANT_COLLECTION: evidence_segments
+      VECTOR_STORE: qdrant
+      EMBEDDER: auto
+      TRANSCRIBER: auto
+      DENOISER: auto
+      PROCESS_INLINE: "0"
+      ALLOW_ANONYMOUS: "true"
+      MAX_UPLOAD_MB: "512"
+      CORS_ORIGINS: "http://localhost:8080"
+    volumes:
+      - ./data:/data
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  worker:
+    build:
+      context: ./backend
+      args:
+        INSTALL_ASR: "false"
+    command: ["python", "-m", "app.worker"]
+    environment:
+      APP_ENV: docker
+      DATA_DIR: /data
+      DATABASE_URL: postgresql+psycopg://evidence:evidence@db:5432/evidence
+      QDRANT_URL: http://qdrant:6333
+      VECTOR_STORE: qdrant
+      TRANSCRIBER: auto
+      DENOISER: auto
+      PROCESS_INLINE: "0"
+    volumes:
+      - ./data:/data
+    depends_on:
+      db:
+        condition: service_healthy
+
+  ui:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - api
+
+volumes:
+  pgdata:
+  qdrant:
