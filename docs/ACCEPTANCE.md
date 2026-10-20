@@ -210,6 +210,35 @@ human-timing target, not something the test suite can assert. The machine-side
 prerequisites are measured: search latency in tens of milliseconds, one click to
 seek, one panel for correction and verification.
 
+## Remote demonstration
+
+`make share` exposes the running instance on a free public HTTPS URL
+(Cloudflare quick tunnel) and self-verifies before printing the link.
+
+Verified through an actual tunnel rather than locally:
+
+| Check | Result |
+|---|---|
+| SPA served at `/` | 200 `text/html`, assets 200 (181 KB js, 16.6 KB css) |
+| Search, all three modes | 200; 9 hits for `autism`; hybrid 1.6 s |
+| Transcript | 773 segments |
+| Chain of custody | 2 steps, hash matches upload |
+| Audio seeking | 206 with `Content-Range` on a 35 MB FLAC, all three variants |
+| Clip export | 200, valid 16 kHz mono FLAC |
+| Full pipeline | upload → ASR → index → searchable in **13.8 s** |
+
+**Why not a cloud platform.** Measured footprint is 152 MB resident with ASR,
+denoiser and embeddings loaded, so free-tier RAM is not the constraint.
+Ephemeral storage is: the 119 MB corpus is correctly gitignored, so a deploy
+boots with an empty database. Render's free tier also spins down after 15 idle
+minutes and its free Postgres expires at 30 days. Hugging Face now gates Docker
+Spaces behind a paid PRO plan, so it is not a free option either.
+
+**This is a demonstration surface, not a deployment.** With
+`ALLOW_ANONYMOUS=true` and `DEV_DEFAULT_ROLE=admin`, anyone holding the URL has
+admin rights. The hostname is unguessable, which is obscurity, not access
+control. Case material must never be exposed this way.
+
 ## Known gaps
 
 - **Accuracy on real speech is much worse than on synthetic speech, and the
