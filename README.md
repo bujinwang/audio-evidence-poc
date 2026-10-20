@@ -86,6 +86,49 @@ make demo      # terminal 2: generate demo audio and ingest it
 
 ---
 
+## Showing it to someone else
+
+`make share` puts the running demo on a public HTTPS URL in about ten seconds:
+
+```bash
+make api        # terminal 1
+make build-ui   # once, so FastAPI serves the SPA
+make share      # terminal 2 → prints a https://<random>.trycloudflare.com link
+```
+
+It verifies the link before printing it (health, search, corpus count), so the
+URL in the banner is one that actually works. Ctrl-C closes it.
+
+**Why a tunnel and not a cloud deploy.** The demo is only convincing with the
+real pipeline behind it, and no free PaaS offers that:
+
+| | Tunnel (this) | Render free | HF Docker Space |
+|---|---|---|---|
+| ffmpeg + ASR + denoiser | yes, already installed | 0.1 CPU, 512 MB — no | requires **paid PRO** |
+| evidence corpus survives a restart | yes (local disk) | no — ephemeral FS | no — ephemeral |
+| cold start | none | ~1 min after 15 min idle | sleep on idle |
+| cost | free, no account | free (750 h/mo) | paid |
+
+The measured footprint is 152 MB resident with every component loaded, so RAM
+was never the blocker — **ephemeral storage** is. The 119 MB corpus is rightly
+gitignored, so a cloud deploy boots with an empty database and nothing to
+search.
+
+**This is a demo link, not a deployment.** `ALLOW_ANONYMOUS=true` with
+`DEV_DEFAULT_ROLE=admin` means anyone holding the URL can upload, edit, verify
+and export. The hostname is unguessable but that is not access control. Stop the
+tunnel when the call ends, and never point this at real case material.
+
+Two operational notes:
+
+- The link dies when the laptop sleeps or the process stops. Keep it awake for
+  the duration.
+- On macOS the hostname can be negatively cached locally even while Cloudflare
+  serves it, so a hand-run `curl` may say "could not resolve host" when the link
+  is fine. The script verifies over DNS-over-HTTPS to avoid that trap.
+
+---
+
 ## Real transcription (optional, recommended)
 
 Without an ASR engine the pipeline falls back to reference transcripts. To get

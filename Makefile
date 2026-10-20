@@ -2,7 +2,7 @@ SHELL := /bin/bash
 PY := backend/.venv/bin/python
 PIP := backend/.venv/bin/pip
 
-.PHONY: help setup api worker ui test demo docker-up docker-down build-ui clean
+.PHONY: help setup api worker ui test demo docker-up docker-down build-ui clean share
 
 help:
 	@echo "setup       create the venv and install backend + frontend deps"
@@ -12,6 +12,7 @@ help:
 	@echo "build-ui    build the SPA so FastAPI serves it on :8000"
 	@echo "demo        generate demo audio and ingest it into a running API"
 	@echo "test        run the backend test suite"
+	@echo "share       expose the running API on a free public URL (cloudflared)"
 	@echo "docker-up   docker compose up --build"
 	@echo "clean       remove venv, node_modules, build output and demo data"
 
@@ -38,6 +39,11 @@ demo:
 
 test:
 	cd backend && ./.venv/bin/python -m pytest -q
+
+# Public demo link. Keeps the real pipeline (ffmpeg + ASR + denoiser) because it
+# tunnels the machine already running it — no free PaaS can host those.
+share:
+	./scripts/share_demo.sh
 
 docker-up:
 	docker compose up --build
