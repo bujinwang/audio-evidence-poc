@@ -26,10 +26,11 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from .db import Base
+from .db import ACTIVE_JOB_PREDICATE, ACTIVE_JOB_UNIQUE_INDEX, Base
 
 
 def new_id(prefix: str = "") -> str:
@@ -77,7 +78,15 @@ class ReviewStatus:
     ALL = (AI_GENERATED, IN_REVIEW, CORRECTED, VERIFIED)
 
 
-SOURCE_TYPES = ("interview", "bodycam", "cassette", "phone_call", "other")
+SOURCE_TYPES = (
+    "interview",
+    "bodycam",
+    "cassette",
+    "phone_call",
+    "sports",
+    "speech",
+    "other",
+)
 
 
 class Recording(Base):
@@ -100,6 +109,8 @@ class Recording(Base):
     uploaded_by: Mapped[str] = mapped_column(String(128), default="unknown")
     recorded_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow, index=True)
+    # Every exhibit belongs to a case. Nullable only so pre-existing rows migrate.
+    case_id: Mapped[str | None] = mapped_column(String(40), nullable=True, index=True)
 
     transcripts: Mapped[list["Transcript"]] = relationship(
         back_populates="recording", cascade="all, delete-orphan"
@@ -111,6 +122,33 @@ class Recording(Base):
 
 class Job(Base):
     __tablename__ = "jobs"
+    # One recording has at most ONE active (queued or running) job.
+    #
+    # `POST /api/recordings/{id}/retry` used to read "is a job active?" and then
+    # insert one. Two concurrent callers both read "no" before either committed
+    # and both inserted, so one recording could be transcribed and embedded four
+    # times over the same rows — and because `run_job()` skips a job it finds in
+    # `running`, three of those four were left in `running` forever, which then
+    # made every later retry answer 409 and the exhibit permanently
+    # un-reprocessable. A Python-level check cannot close that window; a partial
+    # unique index can, and it expresses the invariant exactly: "at most one
+    # active job per recording", not "at most one job per recording", because
+    # finished jobs must accumulate as audit history.
+    #
+    # Honoured by both dialects: SQLite supports `CREATE UNIQUE INDEX ... WHERE`
+    # (3.8.0+), PostgreSQL supports partial indexes natively. The condition is
+    # shared with the migration in `db._ensure_active_job_uniqueness()` so a
+    # database created by `create_all` and one upgraded in place end up with the
+    # same rule.
+    __table_args__ = (
+        Index(
+            ACTIVE_JOB_UNIQUE_INDEX,
+            "recording_id",
+            unique=True,
+            sqlite_where=text(ACTIVE_JOB_PREDICATE),
+            postgresql_where=text(ACTIVE_JOB_PREDICATE),
+        ),
+    )
 
     id: Mapped[str] = mapped_column(String(40), primary_key=True, default=lambda: new_id("job_"))
     recording_id: Mapped[str] = mapped_column(
@@ -198,6 +236,17 @@ class Segment(Base):
 
 class Revision(Base):
     __tablename__ = "revisions"
+    # A passage has at most one revision per version number. Without this the
+    # audit trail can hold two different corrections both claiming to be
+    # "version 2", so the correction history for that passage becomes
+    # ambiguous — a chain-of-custody defect, not a cosmetic one. The unique
+    # constraint makes the invariant a property of the database rather than
+    # something the application merely hopes for. `update_segment()` allocates
+    # the number atomically (`UPDATE ... RETURNING`), so a legitimate
+    # concurrent edit can never collide here.
+    __table_args__ = (
+        UniqueConstraint("segment_id", "version", name="uq_revision_segment_version"),
+    )
 
     id: Mapped[str] = mapped_column(String(40), primary_key=True, default=lambda: new_id("rev_"))
     segment_id: Mapped[str] = mapped_column(
@@ -241,4 +290,69 @@ class SegmentEmbedding(Base):
     model: Mapped[str] = mapped_column(String(128))
     dim: Mapped[int] = mapped_column(Integer)
     vector: Mapped[str] = mapped_column(Text)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class CaseStatus:
+    OPEN = "open"
+    CLOSED = "closed"
+
+
+class Case(Base):
+    """A case file: the unit a police buyer actually works in.
+
+    The app shipped for a year with recordings and no case, which is why the UI
+    could not answer "what is due". Everything evidentiary hangs off this row:
+    the exhibit list, the disclosure clock, and the bundle.
+    """
+
+    __tablename__ = "cases"
+
+    id: Mapped[str] = mapped_column(String(40), primary_key=True, default=lambda: new_id("case_"))
+    number: Mapped[str] = mapped_column(String(32), unique=True, index=True)
+    subject: Mapped[str] = mapped_column(String(256))
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    disclosure_due: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    owner: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    status: Mapped[str] = mapped_column(String(16), default=CaseStatus.OPEN, index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)
+
+
+class CueDecision:
+    OPEN = "open"
+    ACCEPT = "accept"
+    REJECT = "reject"
+    NOT_REDACTABLE = "not_redactable"
+
+    ALL = (OPEN, ACCEPT, REJECT, NOT_REDACTABLE)
+
+
+class CueCandidate(Base):
+    """A span the redaction pass should look at, with a reason that survives disclosure.
+
+    The application never blurs audio. It produces the worksheet that drives the
+    blur pass in the operator's own tool, so the decision and its reason are the
+    product, not the edit.
+    """
+
+    __tablename__ = "cue_candidates"
+    __table_args__ = (Index("ix_cues_recording_start", "recording_id", "start_s"),)
+
+    id: Mapped[str] = mapped_column(String(40), primary_key=True, default=lambda: new_id("cue_"))
+    recording_id: Mapped[str] = mapped_column(
+        ForeignKey("recordings.id", ondelete="CASCADE"), index=True
+    )
+    segment_id: Mapped[str | None] = mapped_column(String(40), nullable=True, index=True)
+    start_s: Mapped[float] = mapped_column(Float, default=0.0)
+    end_s: Mapped[float] = mapped_column(Float, default=0.0)
+    span_text: Mapped[str] = mapped_column(Text, default="")
+    entity_type: Mapped[str] = mapped_column(String(32), default="")
+    reason_code: Mapped[str] = mapped_column(String(32), default="")
+    confidence: Mapped[float] = mapped_column(Float, default=0.0)
+    detector: Mapped[str] = mapped_column(String(32), default="rules")
+    decision: Mapped[str] = mapped_column(String(16), default=CueDecision.OPEN, index=True)
+    reviewer: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=utcnow)

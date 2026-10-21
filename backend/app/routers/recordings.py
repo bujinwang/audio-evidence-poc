@@ -16,9 +16,10 @@ from sqlalchemy.orm import Session
 from .. import audit, storage
 from ..config import get_settings
 from ..db import get_session
-from ..errors import DependencyUnavailable, ProcessingError
+from ..errors import ACTIVE_JOB_MESSAGE, ActiveJobConflict, DependencyUnavailable, ProcessingError
 from ..media import audio_response
 from ..models import (
+    SOURCE_TYPES,
     Job,
     Recording,
     Segment,
@@ -65,6 +66,7 @@ async def upload_recording(
     source_type: str = Form("other"),
     recorded_at: str | None = Form(None),
     transcript_file: UploadFile | None = File(None),
+    case_id: str | None = Form(None),
     session: Session = Depends(get_session),
     actor: Actor = Depends(require("upload")),
 ) -> RecordingOut:
@@ -73,6 +75,7 @@ async def upload_recording(
         source_type=source_type,
         recorded_at=recorded_at,
         transcript_file=transcript_file,
+        case_id=case_id,
         mode="full",
         session=session,
         actor=actor,
@@ -88,6 +91,7 @@ async def _ingest(
     mode: str,
     session: Session,
     actor: Actor,
+    case_id: str | None = None,
 ) -> RecordingOut:
     """Write the original once, hash it, then either triage or fully process."""
     settings = get_settings()
@@ -155,9 +159,8 @@ async def _ingest(
     recording = Recording(
         id=recording_id,
         filename=filename,
-        source_type=source_type if source_type in {
-            "interview", "bodycam", "cassette", "phone_call", "other"
-        } else "other",
+        source_type=source_type if source_type in SOURCE_TYPES else "other",
+        case_id=case_id,
         original_path=str(destination),
         sha256=sha256,
         size_bytes=size,
@@ -186,7 +189,21 @@ async def _ingest(
         session.expire_all()
         return recording_out(session, session.get(Recording, recording.id))
 
+    # No `except ActiveJobConflict` here, deliberately. Every path that creates a
+    # recording allocates a fresh `recording_id` a few lines above (`new_id`), so
+    # this recording provably has no jobs yet and the insert cannot collide. A
+    # handler for a state that cannot occur would be dead code implying a
+    # reachability that does not exist, and would make the next reader wonder
+    # under what circumstances an upload answers 409.
+    #
+    # `submit()` still raises `ActiveJobConflict` honestly if it is ever called
+    # that way (`test_submit_raises_active_job_conflict_rather_than_integrity_error`
+    # pins that contract at the function seam); the mapping to 409 lives at the
+    # call sites that can reach it — `/retry` and `/denoise`. **Do not reason
+    # about `enqueue()` without the fresh-id fact above** — that is the only
+    # reason this call site is exempt.
     jobs.submit(session, recording, actor.name)
+
     session.expire_all()
     refreshed = session.get(Recording, recording.id)
     return recording_out(session, refreshed)
@@ -197,6 +214,7 @@ async def upload_for_triage(
     file: UploadFile = File(...),
     source_type: str = Form("other"),
     recorded_at: str | None = Form(None),
+    case_id: str | None = Form(None),
     session: Session = Depends(get_session),
     actor: Actor = Depends(require("upload")),
 ) -> RecordingOut:
@@ -211,6 +229,7 @@ async def upload_for_triage(
         source_type=source_type,
         recorded_at=recorded_at,
         transcript_file=None,
+        case_id=case_id,
         mode="triage",
         session=session,
         actor=actor,
@@ -266,6 +285,14 @@ def retry_processing(
     session: Session = Depends(get_session),
     actor: Actor = Depends(require("retry")),
 ) -> RecordingOut:
+    """Start a fresh processing run, or 409 if one is already active.
+
+    The active-job check below is a *courtesy*: it produces the 409 without
+    doing any work in the common sequential case. It is not the guarantee. The
+    guarantee is the partial unique index on `jobs(recording_id)` where the
+    status is queued or running, so two callers that both pass this check cannot
+    both create a job — the loser gets the same 409 from the database.
+    """
     recording = _get_or_404(session, recording_id)
     locked_reason = jobs.review_locked(recording_id, session)
     if locked_reason:
@@ -278,15 +305,20 @@ def retry_processing(
         .limit(1)
     ).scalar_one_or_none()
     if running is not None:
-        raise HTTPException(status_code=409, detail="A processing job is already queued or running.")
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=ACTIVE_JOB_MESSAGE
+        )
 
-    audit.record(
-        session, actor, "recording.processing_requested",
-        entity_type="recording", entity_id=recording_id, recording_id=recording_id,
-        detail={"previous_status": recording.status, "previous_error": recording.error},
-    )
-    session.commit()
-    jobs.submit(session, recording, actor.name)
+    try:
+        jobs.request_processing(session, recording, actor)
+    except ActiveJobConflict as exc:
+        # Lost the race: identical answer to the sequential path above, because
+        # to the client it *is* the same situation — somebody else got there
+        # first. A 500 here would be the bug this replaces.
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=exc.message
+        ) from exc
+
     session.expire_all()
     return recording_out(session, session.get(Recording, recording_id))
 
@@ -302,6 +334,27 @@ def denoise_recording(
     Denoising normally happens once, during ingest. This makes it reachable
     afterwards so an investigator can A/B a passage immediately instead of
     re-running the whole pipeline.
+
+    Like `/retry`, the active-job check below is a *courtesy* that answers the
+    common sequential case without taking a slot, not the guarantee: the
+    guarantee is the partial unique index, which `denoise_existing()` claims
+    before it touches a file. Losing that claim means another caller is already
+    building this derivative, so the answer is the same 409 — previously this
+    handler let all four callers run, which produced one artefact but four
+    `recording.denoised` audit events for it.
+
+    **This shares the one active-job slot with ingest**, so denoising an exhibit
+    that is mid-re-index answers 409 rather than racing the pipeline's own
+    denoise stage over the same file. That is the intended trade: one path, one
+    invariant, and no bundle can be zipped around a half-written FLAC.
+
+    There is no denoise control in the UI today (`api.denoise` in
+    `frontend/src/api.ts` has no caller; `PlayerDock`'s `variant` prop is
+    playback, not a trigger), so this 409 is unreachable from the demo surface.
+    **If a button is ever added, give it a waiting affordance — poll the job and
+    show "rebuilding" — rather than weakening the claim.** A client that retries
+    in a loop on 409 would stampede the denoiser, which is the cost the claim
+    exists to avoid.
     """
     recording = _get_or_404(session, recording_id)
 
@@ -312,12 +365,16 @@ def denoise_recording(
         .limit(1)
     ).scalar_one_or_none()
     if running is not None:
-        raise HTTPException(
-            status_code=409, detail="A processing job is already queued or running."
-        )
+        raise HTTPException(status_code=409, detail=ACTIVE_JOB_MESSAGE)
 
     try:
         jobs.denoise_existing(session, recording, actor)
+    except ActiveJobConflict as exc:
+        # Lost the race for the slot. Same message as the courtesy check, because
+        # to the client it is the same situation.
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail=exc.message
+        ) from exc
     except DependencyUnavailable as exc:
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,

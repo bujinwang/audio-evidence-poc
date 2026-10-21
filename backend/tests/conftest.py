@@ -60,6 +60,7 @@ def clean_database():
     db.init_db()
     with db.engine.begin() as conn:
         for table in (
+            "cue_candidates",
             "revisions",
             "audit_events",
             "segment_embeddings",
@@ -67,6 +68,7 @@ def clean_database():
             "transcripts",
             "jobs",
             "recordings",
+            "cases",
         ):
             conn.execute(text(f"DELETE FROM {table}"))
         conn.execute(text("DELETE FROM segments_fts"))

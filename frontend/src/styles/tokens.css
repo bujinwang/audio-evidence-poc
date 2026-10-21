@@ -1,0 +1,44 @@
+/* ---------------------------------------------------------------------------
+   Ledger — design tokens
+   A records office, not a startup. Warm paper, hairline rules, one accent.
+--------------------------------------------------------------------------- */
+
+:root {
+  /* surface */
+  --paper: #f5f4f0;
+  --surface: #ffffff;
+  --surface-2: #faf9f6;
+  --rule: #e1ded6;
+  --rule-2: #cac6bb;
+
+  /* ink */
+  --ink: #14171b;
+  --ink-2: #474d55;
+  --ink-3: #666e79;
+
+  /* one accent */
+  --navy: #12365c;
+  --navy-2: #0c2745;
+  --wash: #e8edf3;
+
+  /* state — never decoration */
+  --green: #1a5a38;
+  --green-w: #e6f0e9;
+  --amber: #7a4a05;
+  --amber-w: #f7edda;
+  --red: #8a2222;
+  --red-w: #f6e6e5;
+  --grey: #4b525b;
+  --grey-w: #ebedf0;
+
+  --radius: 3px;
+  --radius-sm: 2px;
+
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+
+  --rail: 196px;
+  --topbar: 50px;
+}

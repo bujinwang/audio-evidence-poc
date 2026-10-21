@@ -1,0 +1,1341 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Evidence Review — redesign prototype</title>
+<style>
+/* ===========================================================================
+   Ledger — design system for evidence review
+   Direction: a records office, not a startup. Paper, ink, hairlines, stamps.
+   One accent. No gradients. No shadows except the player dock.
+   =========================================================================== */
+:root{
+  --paper:#f5f4f0;
+  --surface:#ffffff;
+  --surface-2:#faf9f6;
+  --ink:#14171b;
+  --ink-2:#474d55;
+  --ink-3:#666e79;
+  --rule:#e1ded6;
+  --rule-2:#cac6bb;
+  --navy:#12365c;
+  --navy-2:#0c2745;
+  --wash:#e8edf3;
+  --green:#1a5a38;  --green-w:#e6f0e9;
+  --amber:#7a4a05;  --amber-w:#f7edda;
+  --red:#8a2222;    --red-w:#f6e6e5;
+  --grey:#4b525b;   --grey-w:#ebedf0;
+  --radius:3px;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+  --serif:Georgia,"Iowan Old Style","Times New Roman",serif;
+  --ui:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--ui);font-size:13px;line-height:1.45;
+  -webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;
+}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:var(--navy);text-decoration:none}
+::selection{background:#d7e2ee}
+
+/* --- app shell ------------------------------------------------------------ */
+.app{display:grid;grid-template-columns:196px 1fr;grid-template-rows:50px 1fr;height:100vh}
+
+.topbar{
+  grid-column:1/-1;display:flex;align-items:center;gap:0;
+  background:var(--surface);border-bottom:1px solid var(--rule-2);
+  padding:0 16px 0 0;
+}
+.brand{display:flex;align-items:center;gap:10px;width:196px;padding-left:16px}
+.brand__mark{
+  width:22px;height:22px;border:1.5px solid var(--navy);border-radius:2px;
+  display:grid;place-items:center;font:600 11px/1 var(--serif);color:var(--navy);
+}
+.brand__name{font-size:12.5px;font-weight:600;letter-spacing:.01em}
+.brand__sub{font-size:10.5px;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase}
+
+.crumb{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--ink-2)}
+.crumb strong{color:var(--ink);font-weight:600}
+.crumb .sep{color:var(--rule-2)}
+.crumb__case{font-family:var(--serif);font-size:14px;letter-spacing:.01em}
+
+.topbar__right{margin-left:auto;display:flex;align-items:center;gap:14px}
+.clock{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2)}
+.clock b{color:var(--ink);font-weight:600}
+.clock.is-risk b{color:var(--red)}
+.actor{display:flex;align-items:center;gap:8px;border-left:1px solid var(--rule);padding-left:14px}
+.actor__dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.actor__name{font-size:12px}
+.actor__role{font-size:10.5px;color:var(--ink-3);text-transform:uppercase;letter-spacing:.06em}
+
+/* --- rail ----------------------------------------------------------------- */
+.rail{
+  background:var(--surface);border-right:1px solid var(--rule-2);
+  padding:10px 0;display:flex;flex-direction:column;gap:2px;
+}
+.rail__group{
+  font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);
+  padding:12px 16px 6px;
+}
+.rail__item{
+  display:flex;align-items:center;gap:9px;width:100%;text-align:left;
+  padding:7px 16px;color:var(--ink-2);border-left:2px solid transparent;font-size:12.5px;
+}
+.rail__item svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.6;flex:0 0 14px}
+.rail__item:hover{background:var(--surface-2);color:var(--ink)}
+.rail__item.is-active{
+  background:var(--wash);border-left-color:var(--navy);color:var(--navy-2);font-weight:600;
+}
+.rail__count{
+  margin-left:auto;font-size:10.5px;color:var(--ink-3);font-variant-numeric:tabular-nums;
+}
+.rail__item.is-active .rail__count{color:var(--navy)}
+.rail__foot{margin-top:auto;padding:12px 16px;border-top:1px solid var(--rule);font-size:10.5px;color:var(--ink-3);line-height:1.5}
+
+/* --- main ----------------------------------------------------------------- */
+.main{overflow:auto;position:relative}
+.view{display:none;padding:0 0 72px}
+.view.is-active{display:block}
+
+/* --- page head ------------------------------------------------------------ */
+.pagehead{
+  display:flex;align-items:flex-end;gap:16px;
+  padding:18px 24px 14px;background:var(--surface);border-bottom:1px solid var(--rule-2);
+}
+.pagehead h1{
+  margin:0;font-family:var(--serif);font-size:20px;font-weight:600;letter-spacing:-.01em;
+}
+.pagehead p{margin:3px 0 0;font-size:12px;color:var(--ink-2);max-width:70ch}
+.pagehead__right{margin-left:auto;display:flex;gap:8px;align-items:center}
+
+/* --- buttons -------------------------------------------------------------- */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;height:30px;padding:0 11px;
+  border:1px solid var(--rule-2);border-radius:var(--radius);background:var(--surface);
+  font-size:12px;color:var(--ink);white-space:nowrap;
+}
+.btn:hover{background:var(--surface-2);border-color:var(--ink-3)}
+.btn--primary{background:var(--navy);border-color:var(--navy);color:#fff}
+.btn--primary:hover{background:var(--navy-2);border-color:var(--navy-2)}
+.btn--quiet{border-color:transparent;color:var(--ink-2)}
+.btn--quiet:hover{background:var(--surface-2);border-color:var(--rule)}
+.btn--sm{height:26px;padding:0 9px;font-size:11.5px}
+.btn:focus-visible,.rail__item:focus-visible,tr:focus-visible{
+  outline:2px solid var(--navy);outline-offset:1px;
+}
+.kbd{
+  display:inline-block;min-width:16px;padding:1px 4px;border:1px solid var(--rule-2);
+  border-bottom-width:2px;border-radius:2px;font:10px/1.4 var(--mono);color:var(--ink-3);
+  background:var(--surface-2);text-align:center;
+}
+
+/* --- stamps (status language) --------------------------------------------- */
+.stamp{
+  display:inline-flex;align-items:center;gap:5px;padding:2px 6px;
+  border:1px solid currentColor;border-radius:2px;
+  font-size:9.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;
+}
+.stamp--verified{color:var(--green);background:var(--green-w)}
+.stamp--corrected{color:var(--amber);background:var(--amber-w)}
+.stamp--unreviewed{color:var(--grey);background:var(--grey-w)}
+.stamp--flagged{color:var(--red);background:var(--red-w)}
+.stamp--info{color:var(--navy);background:var(--wash)}
+.stamp--plain{color:var(--ink-3);background:transparent;border-style:dashed}
+
+/* --- panels --------------------------------------------------------------- */
+.panel{background:var(--surface);border:1px solid var(--rule-2);border-radius:var(--radius)}
+.panel__head{
+  display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--rule);
+}
+.panel__head h2{margin:0;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
+.panel__head .right{margin-left:auto;display:flex;gap:6px;align-items:center}
+.panel__body{padding:14px}
+.grid{padding:16px 24px;display:grid;gap:14px}
+
+/* --- tables --------------------------------------------------------------- */
+.tbl{width:100%;border-collapse:collapse;font-size:12.5px}
+.tbl th{
+  text-align:left;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600;padding:8px 12px;border-bottom:1px solid var(--rule-2);
+  background:var(--surface);position:sticky;top:0;z-index:2;
+}
+.tbl td{padding:9px 12px;border-bottom:1px solid var(--rule);vertical-align:middle}
+.tbl tbody tr{cursor:pointer}
+.tbl tbody tr:hover{background:var(--surface-2)}
+.tbl tbody tr:hover .rowhint{opacity:1}
+.tbl .num{text-align:right;font-variant-numeric:tabular-nums}
+.tbl .mono{font-family:var(--mono);font-size:11.5px;color:var(--ink-2)}
+.rowhint{opacity:0;color:var(--ink-3);font-size:10.5px;transition:opacity .12s}
+.caseid{font-family:var(--mono);font-size:11.5px;color:var(--navy);font-weight:600}
+.subject{font-weight:600}
+.sub{color:var(--ink-3);font-size:11.5px;margin-top:1px}
+
+/* --- meta strips ---------------------------------------------------------- */
+.strip{
+  display:flex;flex-wrap:wrap;gap:0;border-bottom:1px solid var(--rule-2);
+  background:var(--surface);
+}
+.strip__cell{padding:10px 18px;border-right:1px solid var(--rule);min-width:120px}
+.strip__cell:last-child{border-right:0}
+.strip__k{font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.strip__v{font-size:13px;margin-top:2px}
+.strip__v.serif{font-family:var(--serif);font-size:14px}
+
+/* --- case header ---------------------------------------------------------- */
+.casehead{padding:18px 24px 16px;background:var(--surface);border-bottom:1px solid var(--rule-2)}
+.casehead__top{display:flex;align-items:baseline;gap:12px}
+.casehead h1{margin:0;font-family:var(--serif);font-size:22px;font-weight:600;letter-spacing:-.01em}
+.casehead__no{font-family:var(--mono);font-size:12px;color:var(--navy);letter-spacing:.04em}
+.casehead__sub{margin:6px 0 0;color:var(--ink-2);font-size:12.5px;max-width:90ch}
+.casehead__actions{display:flex;gap:8px;margin-top:14px}
+
+/* --- small bits ----------------------------------------------------------- */
+.hint{color:var(--ink-3);font-size:11.5px}
+.mono{font-family:var(--mono)}
+.tnum{font-variant-numeric:tabular-nums}
+.bar{height:3px;background:var(--rule);border-radius:2px;overflow:hidden;min-width:44px}
+.bar i{display:block;height:100%;background:var(--navy)}
+.bar--amber i{background:var(--amber)}
+.bar--green i{background:var(--green)}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 9px;
+  border:1px solid var(--rule-2);border-radius:12px;background:var(--surface);
+  font-size:11.5px;color:var(--ink-2);
+}
+.chip.is-on{background:var(--navy);border-color:var(--navy);color:#fff}
+.chip:hover{border-color:var(--ink-3)}
+.divider{height:1px;background:var(--rule);margin:12px 0}
+
+/* --- search ---------------------------------------------------------------- */
+.searchbar{
+  display:flex;align-items:center;gap:10px;padding:14px 24px;background:var(--surface);
+  border-bottom:1px solid var(--rule);
+}
+.searchbar__icon{color:var(--ink-3);display:flex}
+.searchbar input{
+  flex:1;border:0;outline:0;font-size:15px;background:transparent;color:var(--ink);
+  padding:4px 0;letter-spacing:-.01em;
+}
+.searchbar:focus-within{box-shadow:inset 0 -2px 0 var(--navy)}
+.filters{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:10px 24px;background:var(--surface);border-bottom:1px solid var(--rule-2);
+}
+.seg{display:inline-flex;border:1px solid var(--rule-2);border-radius:var(--radius);overflow:hidden}
+.seg__i{height:24px;padding:0 10px;font-size:11.5px;color:var(--ink-2);border-right:1px solid var(--rule)}
+.seg__i:last-child{border-right:0}
+.seg__i.is-on{background:var(--navy);color:#fff}
+.results{padding:0 24px}
+.hitmeta{font-size:11px;color:var(--ink-3);margin-top:2px}
+.sig{
+  display:inline-block;padding:1px 5px;border:1px solid var(--rule-2);border-radius:2px;
+  font:10px/1.5 var(--mono);color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em;
+}
+tr.is-selected{background:var(--wash)!important;box-shadow:inset 2px 0 0 var(--navy)}
+
+/* --- player dock ----------------------------------------------------------- */
+.dock{
+  position:fixed;left:196px;right:0;bottom:0;display:flex;align-items:center;gap:14px;
+  padding:10px 24px;background:var(--surface);border-top:1px solid var(--rule-2);
+  box-shadow:0 -2px 10px rgba(20,23,27,.05);z-index:5;
+}
+#view-find{padding-bottom:64px}
+.dock__play{
+  width:32px;height:32px;border:1px solid var(--navy);border-radius:2px;color:var(--navy);
+  display:grid;place-items:center;font-size:11px;background:var(--wash);
+}
+.dock__play:hover{background:var(--navy);color:#fff}
+.dock__meta{min-width:230px}
+.dock__title{font-size:12px;font-weight:600}
+.dock__sub{font-size:10.5px;color:var(--ink-3);margin-top:1px}
+.wave{display:flex;align-items:center;gap:1px;height:26px;flex:1;min-width:120px}
+.wave span{flex:1;background:var(--rule-2);border-radius:1px;min-height:2px}
+.wave span.is-played{background:var(--navy)}
+.dock__time{font-size:11px;color:var(--ink-3);min-width:88px;text-align:right}
+.dock__tools{display:flex;gap:6px}
+
+/* --- review ---------------------------------------------------------------- */
+.reviewbar{
+  position:sticky;top:0;z-index:4;display:flex;align-items:center;gap:8px;
+  padding:0 24px;height:40px;background:var(--surface);border-bottom:1px solid var(--rule-2);
+}
+.reviewbar__left{display:flex;align-items:center;gap:8px;font-size:12.5px}
+.reviewbar__right{margin-left:auto;display:flex;align-items:center;gap:6px}
+.sep{color:var(--rule-2)}
+.review{display:grid;grid-template-columns:290px minmax(0,1fr) 316px;align-items:start}
+.review__list{border-right:1px solid var(--rule);background:var(--surface);max-height:calc(100vh - 90px);overflow:auto}
+.review__listhead{
+  display:flex;justify-content:space-between;padding:9px 12px;border-bottom:1px solid var(--rule-2);
+  font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);
+  position:sticky;top:0;background:var(--surface);z-index:2;
+}
+.seg-row{
+  display:grid;grid-template-columns:56px minmax(0,1fr) 26px;gap:8px;width:100%;text-align:left;
+  padding:7px 12px;border-bottom:1px solid var(--rule);font-size:11.5px;color:var(--ink-2);
+  border-left:2px solid transparent;align-items:start;
+}
+.seg-row:hover{background:var(--surface-2)}
+.seg-row.is-active{background:var(--wash);border-left-color:var(--navy);color:var(--ink)}
+.seg-row .mono{font-size:10.5px;color:var(--ink-3)}
+.seg-row__text{line-height:1.4}
+.conf{
+  font:9.5px/1.6 var(--mono);text-align:center;border-radius:2px;
+  color:var(--grey);background:var(--grey-w);
+}
+.conf--low{color:var(--red);background:var(--red-w)}
+.conf--mid{color:var(--amber);background:var(--amber-w)}
+.conf--high{color:var(--green);background:var(--green-w)}
+.review__main{padding:16px 20px;min-height:calc(100vh - 90px)}
+.review__meta{display:flex;align-items:center;gap:8px;font-size:11.5px;color:var(--ink-2)}
+.review__text{
+  font-size:19px;line-height:1.55;margin:12px 0 14px;font-family:var(--serif);
+  letter-spacing:-.01em;max-width:62ch;
+}
+.word-low{background:var(--amber-w);box-shadow:inset 0 -2px 0 var(--amber);padding:0 1px}
+.review__actions{display:flex;gap:6px}
+.review__aside{padding:14px;border-left:1px solid var(--rule);background:var(--surface-2);min-height:calc(100vh - 90px)}
+.diff__row{display:grid;grid-template-columns:58px 1fr;gap:8px;padding:4px 0;font-size:12px}
+.diff__k{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-3);padding-top:2px}
+.diff__v--old{color:var(--ink-3);text-decoration:line-through;text-decoration-color:var(--rule-2)}
+.diff__v mark{background:var(--green-w);color:var(--green);padding:0 2px}
+.inputlike{
+  flex:1;border:1px dashed var(--rule-2);border-radius:2px;padding:6px 9px;
+  color:var(--ink-2);background:var(--surface-2);font-size:12px;
+}
+
+/* --- cue sheet ------------------------------------------------------------- */
+.cue{padding:10px 12px;border-bottom:1px solid var(--rule)}
+.cue:last-child{border-bottom:0}
+.cue__top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.cue__text{font-size:12px;margin:6px 0}
+.cue__row{display:flex;align-items:center;gap:8px;font-size:11px}
+.cue__actions{display:flex;gap:5px;margin-top:8px}
+
+/* --- custody list ---------------------------------------------------------- */
+.custody{list-style:none;margin:0;padding:12px 14px;display:flex;flex-direction:column;gap:12px}
+.custody li{display:grid;grid-template-columns:10px 1fr;gap:9px;position:relative}
+.custody__dot{
+  width:7px;height:7px;border-radius:50%;border:1.5px solid var(--navy);
+  background:var(--surface);margin-top:4px;position:relative;z-index:1;
+}
+.custody li:not(:last-child):before{
+  content:"";position:absolute;left:3px;top:10px;bottom:-14px;width:1px;background:var(--rule-2);
+}
+.custody b{font-size:11.5px;font-weight:600}
+
+/* --- disclosure artifacts -------------------------------------------------- */
+.notice{padding:9px 11px;border-radius:2px;font-size:11.5px;line-height:1.5}
+.notice--warn{background:var(--amber-w);color:var(--amber);border:1px solid #e5d3b0}
+.cover{
+  background:#fff;border:1px solid var(--rule-2);padding:20px 22px;
+  font-family:var(--serif);color:var(--ink);box-shadow:0 1px 0 var(--rule);
+}
+.cover__org{
+  font-family:var(--ui);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);padding-bottom:10px;border-bottom:1px solid var(--rule);
+}
+.cover h3{margin:14px 0 12px;font-size:17px;font-weight:600;letter-spacing:-.01em}
+.cover__tbl{width:100%;border-collapse:collapse;font-size:12px}
+.cover__tbl td{padding:4px 0;vertical-align:top}
+.cover__tbl td:first-child{width:96px;color:var(--ink-3);font-family:var(--ui);font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;padding-top:6px}
+.cover__note{margin:14px 0 0;padding-top:12px;border-top:1px solid var(--rule);font-size:11.5px;color:var(--ink-2);line-height:1.55}
+.manifest{padding:4px 0}
+.manifest div{
+  display:flex;justify-content:space-between;gap:10px;padding:6px 14px;
+  border-bottom:1px solid var(--rule);font-size:11px;
+}
+.manifest span{color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.manifest b{color:var(--ink-3);font-weight:400;flex:0 0 auto}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ======================= TOP BAR ======================= -->
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand__mark">ER</span>
+      <div>
+        <div class="brand__name">Evidence Review</div>
+        <div class="brand__sub">Technology North</div>
+      </div>
+    </div>
+
+    <div class="crumb">
+      <span class="crumb__case">Reopened 1998 homicide</span>
+      <span class="sep">/</span>
+      <strong class="mono">26-104772</strong>
+      <span class="sep">/</span>
+      <span>Exhibit E-001</span>
+    </div>
+
+    <div class="topbar__right">
+      <div class="clock is-risk">
+        <span>Crown disclosure due</span>
+        <b>in 6 days</b>
+        <span class="hint">· 2 exhibits unverified</span>
+      </div>
+      <div class="actor">
+        <span class="actor__dot"></span>
+        <span class="actor__name">R. Cardinal</span>
+        <span class="actor__role">Reviewer</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================= RAIL ======================= -->
+  <nav class="rail" aria-label="Workspace">
+    <div class="rail__group">Case</div>
+    <button class="rail__item is-active" data-view="cases">
+      <svg viewBox="0 0 16 16"><path d="M2 4.5h4l1.2 1.5H14v7.5H2z"/></svg>
+      Case queue <span class="rail__count">4</span>
+    </button>
+    <button class="rail__item" data-view="evidence">
+      <svg viewBox="0 0 16 16"><path d="M2.5 3.5h11v9h-11z"/><path d="M2.5 6.5h11"/></svg>
+      Evidence <span class="rail__count">42</span>
+    </button>
+    <button class="rail__item" data-view="find">
+      <svg viewBox="0 0 16 16"><circle cx="7" cy="7" r="3.6"/><path d="M10 10l3.5 3.5"/></svg>
+      Find
+    </button>
+    <button class="rail__item" data-view="review">
+      <svg viewBox="0 0 16 16"><path d="M2 8h1.5l1-3 1.6 6 1.4-8 1.4 9 1.2-4H14"/></svg>
+      Review <span class="rail__count">17</span>
+    </button>
+
+    <div class="rail__group">Disclosure</div>
+    <button class="rail__item" data-view="redaction">
+      <svg viewBox="0 0 16 16"><path d="M3 3h10v10H3z"/><path d="M6 3v10M10 3v10M3 8h10"/></svg>
+      Cue sheet <span class="rail__count">38</span>
+    </button>
+    <button class="rail__item" data-view="disclosure">
+      <svg viewBox="0 0 16 16"><path d="M3 6.5l5-3 5 3v6l-5 2.5-5-2.5z"/><path d="M3 6.5l5 3 5-3M8 9.5V15"/></svg>
+      Bundle
+    </button>
+
+    <div class="rail__group">Planning</div>
+    <button class="rail__item" data-view="cost">
+      <svg viewBox="0 0 16 16"><path d="M3 13V7M8 13V3M13 13V9"/></svg>
+      Cost model
+    </button>
+
+    <div class="rail__foot">
+      Offline profile<br />
+      No outbound network<br />
+      <span class="mono">sha256 verified</span>
+    </div>
+  </nav>
+
+  <main class="main">
+
+    <!-- ======================= CASES ======================= -->
+    <section class="view is-active" id="view-cases">
+      <div class="pagehead">
+        <div>
+          <h1>Case queue</h1>
+          <p>Every case carries its own exhibit list, custody record and disclosure clock. Sorted by what is due next, not by what was opened last.</p>
+        </div>
+        <div class="pagehead__right">
+          <button class="chip is-on">All</button>
+          <button class="chip">Due this week</button>
+          <button class="chip">In review</button>
+          <button class="chip">Awaiting triage</button>
+        </div>
+      </div>
+
+      <div class="strip">
+        <div class="strip__cell"><div class="strip__k">Open cases</div><div class="strip__v tnum">4</div></div>
+        <div class="strip__cell"><div class="strip__k">Exhibits</div><div class="strip__v tnum">5,164</div></div>
+        <div class="strip__cell"><div class="strip__k">Hours of audio</div><div class="strip__v tnum">2,180</div></div>
+        <div class="strip__cell"><div class="strip__k">Disclosure at risk</div><div class="strip__v tnum" style="color:var(--red)">2</div></div>
+        <div class="strip__cell"><div class="strip__k">Reviewer capacity</div><div class="strip__v tnum">3 of 5</div></div>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:110px">Case</th>
+                <th>Subject</th>
+                <th style="width:90px" class="num">Exhibits</th>
+                <th style="width:150px">Stage</th>
+                <th style="width:120px">Owner</th>
+                <th style="width:130px">Disclosure</th>
+                <th style="width:60px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-go="evidence">
+                <td><span class="caseid">26-104772</span></td>
+                <td>
+                  <div class="subject">Reopened 1998 homicide — audio review</div>
+                  <div class="sub">Microcassette statements + 911 re-interview · 6 exhibits flagged</div>
+                </td>
+                <td class="num tnum">42</td>
+                <td><span class="stamp stamp--corrected">In review</span></td>
+                <td>R. Cardinal</td>
+                <td><span style="color:var(--red)">6 days</span></td>
+                <td class="rowhint">↵ open</td>
+              </tr>
+              <tr data-go="evidence">
+                <td><span class="caseid">26-098431</span></td>
+                <td>
+                  <div class="subject">BWC disclosure — 14 units</div>
+                  <div class="sub">1,204 files · redaction queue at 61% · 2 audio files blocked</div>
+                </td>
+                <td class="num tnum">1,204</td>
+                <td><span class="stamp stamp--flagged">At risk</span></td>
+                <td>M. Okafor</td>
+                <td><span style="color:var(--red)">2 days</span></td>
+                <td class="rowhint">↵ open</td>
+              </tr>
+              <tr data-go="evidence">
+                <td><span class="caseid">26-091120</span></td>
+                <td>
+                  <div class="subject">Major collision — dash cam and 911</div>
+                  <div class="sub">18 files registered, not yet indexed</div>
+                </td>
+                <td class="num tnum">18</td>
+                <td><span class="stamp stamp--unreviewed">Triaged</span></td>
+                <td>—</td>
+                <td>21 days</td>
+                <td class="rowhint">↵ open</td>
+              </tr>
+              <tr data-go="evidence">
+                <td><span class="caseid">25-118004</span></td>
+                <td>
+                  <div class="subject">Historical tape digitization — microcassette</div>
+                  <div class="sub">3,900 tapes · windowed indexing on demand</div>
+                </td>
+                <td class="num tnum">3,900</td>
+                <td><span class="stamp stamp--plain">Archive</span></td>
+                <td>—</td>
+                <td>—</td>
+                <td class="rowhint">↵ open</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="panel">
+            <div class="panel__head"><h2>Disclosure clock</h2><span class="right hint">Crown · Alberta</span></div>
+            <div class="panel__body">
+              <div style="display:flex;align-items:baseline;gap:8px">
+                <span class="mono" style="font-size:11px;color:var(--ink-3)">26-098431</span>
+                <strong style="color:var(--red)">2 days</strong>
+                <span class="hint">— 2 exhibits blocked on cue-sheet review</span>
+              </div>
+              <div class="bar bar--amber" style="margin:10px 0 4px"><i style="width:78%"></i></div>
+              <div class="hint">61% of redaction decisions complete · 470 candidates unreviewed</div>
+              <div class="divider"></div>
+              <div style="display:flex;align-items:baseline;gap:8px">
+                <span class="mono" style="font-size:11px;color:var(--ink-3)">26-104772</span>
+                <strong>6 days</strong>
+                <span class="hint">— 2 of 42 exhibits unverified</span>
+              </div>
+              <div class="bar" style="margin:10px 0 4px"><i style="width:92%"></i></div>
+              <div class="hint">Review complete on E-001, E-004, E-005</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__head"><h2>What needs a person</h2></div>
+            <div class="panel__body" style="padding:0">
+              <table class="tbl">
+                <tbody>
+                  <tr><td style="width:66px;white-space:nowrap" class="mono">E-002</td><td>1998 microcassette — 41 min unindexed</td><td class="num"><span class="stamp stamp--unreviewed">Promote?</span></td></tr>
+                  <tr><td class="mono" style="white-space:nowrap">E-003</td><td>BWC 412 — 22 min, no index</td><td class="num"><span class="stamp stamp--unreviewed">Promote?</span></td></tr>
+                  <tr><td class="mono" style="white-space:nowrap">E-006</td><td>Team meeting — 12% reviewed</td><td class="num"><span class="stamp stamp--corrected">Review</span></td></tr>
+                  <tr><td class="mono" style="white-space:nowrap">E-001</td><td>911 call — 3 low-confidence words</td><td class="num"><span class="stamp stamp--corrected">Review</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= EVIDENCE ======================= -->
+    <section class="view" id="view-evidence">
+      <div class="casehead">
+        <div class="casehead__top">
+          <h1>Reopened 1998 homicide</h1>
+          <span class="casehead__no">26-104772</span>
+          <span class="stamp stamp--info">Crown disclosure</span>
+        </div>
+        <p class="casehead__sub">
+          Re-interview audio and the original microcassette statement for the 1998 file.
+          Six exhibits, two of them unindexed by choice — the tape is 41 minutes and only
+          14:00–18:00 was promoted for the reopened statement.
+        </p>
+        <div class="casehead__actions">
+          <button class="btn btn--primary">Promote a window…</button>
+          <button class="btn" data-go="review">Continue review</button>
+          <button class="btn" data-go="disclosure">Build disclosure</button>
+          <button class="btn btn--quiet">Case custody record</button>
+        </div>
+      </div>
+
+      <div class="strip">
+        <div class="strip__cell"><div class="strip__k">Exhibits</div><div class="strip__v tnum">6</div></div>
+        <div class="strip__cell"><div class="strip__k">Audio</div><div class="strip__v tnum">1 h 22 m</div></div>
+        <div class="strip__cell"><div class="strip__k">Indexed</div><div class="strip__v tnum">58 m <span class="hint">of 82</span></div></div>
+        <div class="strip__cell"><div class="strip__k">Reviewed</div><div class="strip__v tnum">64%</div></div>
+        <div class="strip__cell"><div class="strip__k">Cue candidates</div><div class="strip__v tnum">38 <span class="hint">· 7 open</span></div></div>
+        <div class="strip__cell"><div class="strip__k">Custody events</div><div class="strip__v tnum">35</div></div>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="panel__head">
+            <h2>Exhibit list</h2>
+            <span class="right hint">Sorted by exhibit number · click a row to review</span>
+          </div>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:64px">Exhibit</th>
+                <th>Recording</th>
+                <th style="width:82px">Source</th>
+                <th style="width:70px" class="num">Length</th>
+                <th style="width:190px">Indexed</th>
+                <th style="width:120px">Reviewed</th>
+                <th style="width:104px">Custody</th>
+                <th style="width:84px"></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr data-go="review">
+                <td><span class="mono">E-001</span></td>
+                <td>
+                  <div class="subject">911 call — female whispering, hidden in bedroom</div>
+                  <div class="sub">2022-09-07 12:00 · Phoenix PD release · 49 segments</div>
+                </td>
+                <td>Phone</td>
+                <td class="num mono">2:39</td>
+                <td><span class="stamp stamp--verified">Full</span> <span class="hint">49 seg</span></td>
+                <td><div class="bar bar--green" style="margin-bottom:3px"><i style="width:100%"></i></div><span class="hint tnum">100% · verified</span></td>
+                <td class="hint tnum">6 events</td>
+                <td><button class="btn btn--sm">Open</button></td>
+              </tr>
+              <tr data-go="review">
+                <td><span class="mono">E-002</span></td>
+                <td>
+                  <div class="subject">Microcassette statement — witness A</div>
+                  <div class="sub">1998-04-02 10:15 · digitized from tape · windowed index</div>
+                </td>
+                <td>Cassette</td>
+                <td class="num mono">41:12</td>
+                <td><span class="stamp stamp--corrected">Window</span> <span class="hint">14:00–18:00 · 37 m dark</span></td>
+                <td><div class="bar bar--amber" style="margin-bottom:3px"><i style="width:32%"></i></div><span class="hint tnum">32%</span></td>
+                <td class="hint tnum">11 events</td>
+                <td><button class="btn btn--sm">Open</button></td>
+              </tr>
+              <tr>
+                <td><span class="mono">E-003</span></td>
+                <td>
+                  <div class="subject">BWC 412 — traffic stop</div>
+                  <div class="sub">2026-09-05 23:48 · registered, hashed, not transcribed</div>
+                </td>
+                <td>Bodycam</td>
+                <td class="num mono">22:04</td>
+                <td><span class="stamp stamp--unreviewed">None</span> <span class="hint">triaged</span></td>
+                <td><span class="hint">—</span></td>
+                <td class="hint tnum">3 events</td>
+                <td><button class="btn btn--sm">Promote</button></td>
+              </tr>
+              <tr data-go="review">
+                <td><span class="mono">E-004</span></td>
+                <td>
+                  <div class="subject">Championship broadcast — booth commentary</div>
+                  <div class="sub">2025-11-15 19:00 · two speakers over stadium ambience</div>
+                </td>
+                <td>Sport</td>
+                <td class="num mono">3:00</td>
+                <td><span class="stamp stamp--verified">Full</span> <span class="hint">72 seg</span></td>
+                <td><div class="bar" style="margin-bottom:3px"><i style="width:0%"></i></div><span class="hint tnum">0%</span></td>
+                <td class="hint tnum">4 events</td>
+                <td><button class="btn btn--sm">Open</button></td>
+              </tr>
+              <tr data-go="review">
+                <td><span class="mono">E-005</span></td>
+                <td>
+                  <div class="subject">Press conference — bodycam redaction programme</div>
+                  <div class="sub">2024-12-18 10:00 · 30 minutes, one podium + questions</div>
+                </td>
+                <td>Speech</td>
+                <td class="num mono">30:17</td>
+                <td><span class="stamp stamp--verified">Full</span> <span class="hint">773 seg</span></td>
+                <td><div class="bar bar--green" style="margin-bottom:3px"><i style="width:74%"></i></div><span class="hint tnum">74%</span></td>
+                <td class="hint tnum">9 events</td>
+                <td><button class="btn btn--sm">Open</button></td>
+              </tr>
+              <tr>
+                <td><span class="mono">E-006</span></td>
+                <td>
+                  <div class="subject">Team meeting — four speakers, one room</div>
+                  <div class="sub">2026-08-14 22:42 · reference transcript supplied</div>
+                </td>
+                <td>Interview</td>
+                <td class="num mono">1:30</td>
+                <td><span class="stamp stamp--verified">Full</span> <span class="hint">20 seg</span></td>
+                <td><div class="bar bar--amber" style="margin-bottom:3px"><i style="width:12%"></i></div><span class="hint tnum">12%</span></td>
+                <td class="hint tnum">2 events</td>
+                <td><button class="btn btn--sm">Open</button></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:14px">
+          <div class="panel">
+            <div class="panel__head"><h2>Why E-002 is only windowed</h2></div>
+            <div class="panel__body">
+              <p style="margin:0 0 10px;color:var(--ink-2)">
+                Full transcription of 41 minutes costs 41 minutes of compute and roughly
+                <strong>$0.00</strong> on-premises, but it also puts 37 minutes of unrelated
+                conversation into the index, where it becomes disclosable. The reopened
+                statement runs 14:00–18:00, so only that window was promoted.
+              </p>
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:4px">
+                <div>
+                  <div class="strip__k">Full index</div>
+                  <div class="tnum" style="font-size:15px">41 m</div>
+                  <div class="hint">$0.00 · 100% disclosable</div>
+                </div>
+                <div>
+                  <div class="strip__k">This window</div>
+                  <div class="tnum" style="font-size:15px;color:var(--green)">4 m</div>
+                  <div class="hint">$0.00 · 10% disclosable</div>
+                </div>
+                <div>
+                  <div class="strip__k">Still unindexed</div>
+                  <div class="tnum" style="font-size:15px;color:var(--amber)">37 m</div>
+                  <div class="hint">promotable in one click</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__head"><h2>Case custody</h2><span class="right hint">newest first</span></div>
+            <div class="panel__body" style="padding:0">
+              <ol class="custody">
+                <li><span class="custody__dot"></span><div><b>Window promoted</b><div class="hint">E-002 14:00–18:00 · R. Cardinal · 10:42</div></div></li>
+                <li><span class="custody__dot"></span><div><b>Segment verified</b><div class="hint">E-001 seg 7 · R. Cardinal · 10:31</div></div></li>
+                <li><span class="custody__dot"></span><div><b>Cue sheet exported</b><div class="hint">E-001 · CSV · 09:58</div></div></li>
+                <li><span class="custody__dot"></span><div><b>Tape digitized</b><div class="hint">E-002 · station 2 · M. Okafor · yesterday</div></div></li>
+                <li><span class="custody__dot"></span><div><b>Original hashed</b><div class="hint">E-002 · sha256 4f9c…a1 · yesterday</div></div></li>
+              </ol>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= FIND ======================= -->
+    <section class="view" id="view-find">
+      <div class="pagehead">
+        <div>
+          <h1>Find</h1>
+          <p>One query across the case. Every hit is a passage you can play, not a document you have to re-read.</p>
+        </div>
+        <div class="pagehead__right">
+          <button class="chip is-on">This case</button>
+          <button class="chip">Whole archive</button>
+        </div>
+      </div>
+
+      <div class="searchbar">
+        <span class="searchbar__icon">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="7" cy="7" r="3.6"/><path d="M10 10l3.5 3.5"/></svg>
+        </span>
+        <input id="q" value="woman hiding from an attacker" aria-label="Search" />
+        <span class="kbd">/</span>
+        <button class="btn btn--primary btn--sm">Search</button>
+      </div>
+
+      <div class="filters">
+        <div class="seg" role="tablist">
+          <button class="seg__i is-on">Hybrid</button>
+          <button class="seg__i">Keyword</button>
+          <button class="seg__i">Semantic</button>
+        </div>
+        <span class="hint">Exhibit</span>
+        <button class="chip is-on">E-001</button>
+        <button class="chip">E-002</button>
+        <button class="chip">E-005</button>
+        <span class="hint" style="margin-left:auto">3 passages · 38 ms · sentence-transformers</span>
+      </div>
+
+      <div class="results">
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th style="width:34px"></th>
+              <th style="width:62px">Time</th>
+              <th style="width:58px">Exhibit</th>
+              <th>Passage</th>
+              <th style="width:88px">Signals</th>
+              <th style="width:96px">Status</th>
+              <th style="width:44px" class="num">Score</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="is-selected">
+              <td class="mono hint">1</td>
+              <td class="mono">00:31.62</td>
+              <td class="mono">E-001</td>
+              <td>
+                <div>and she was hiding in her kid's bedroom.</div>
+                <div class="hitmeta">E-001 · 911 call · 2022-09-07 · speaker unknown</div>
+              </td>
+              <td><span class="sig">sem</span></td>
+              <td><span class="stamp stamp--verified">Verified</span></td>
+              <td class="num mono">0.033</td>
+            </tr>
+            <tr>
+              <td class="mono hint">2</td>
+              <td class="mono">00:29.02</td>
+              <td class="mono">E-001</td>
+              <td>
+                <div>She had been attacked by her boyfriend</div>
+                <div class="hitmeta">E-001 · 911 call · 2022-09-07 · speaker unknown</div>
+              </td>
+              <td><span class="sig">sem</span></td>
+              <td><span class="stamp stamp--verified">Verified</span></td>
+              <td class="num mono">0.032</td>
+            </tr>
+            <tr>
+              <td class="mono hint">3</td>
+              <td class="mono">12:04.10</td>
+              <td class="mono">E-005</td>
+              <td>
+                <div>...she was able to describe the vehicle to the dispatcher.</div>
+                <div class="hitmeta">E-005 · press conference · 2024-12-18 · speaker 2</div>
+              </td>
+              <td><span class="sig">kw</span></td>
+              <td><span class="stamp stamp--unreviewed">Unreviewed</span></td>
+              <td class="num mono">0.014</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="dock">
+        <button class="dock__play" aria-label="Play">▶</button>
+        <div class="dock__meta">
+          <div class="dock__title">E-001 · 911 call — female whispering</div>
+          <div class="dock__sub mono">00:31.62 – 00:35.56 · speaker unknown · original</div>
+        </div>
+        <div class="wave" id="wave"></div>
+        <div class="dock__time mono">00:31 / 02:39</div>
+        <div class="dock__tools">
+          <button class="btn btn--sm">−5s</button>
+          <button class="btn btn--sm">+5s</button>
+          <button class="btn btn--sm">1×</button>
+          <button class="btn btn--sm btn--primary">Open in review</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= REVIEW ======================= -->
+    <section class="view" id="view-review">
+      <div class="reviewbar">
+        <div class="reviewbar__left">
+          <span class="mono" style="color:var(--navy)">E-001</span>
+          <span class="sep">/</span>
+          <span>911 call — female whispering</span>
+          <span class="sep">/</span>
+          <span class="mono hint">segment 7 of 49</span>
+        </div>
+        <div class="reviewbar__right">
+          <span class="stamp stamp--verified">Verified</span>
+          <button class="btn btn--sm">Previous</button>
+          <button class="btn btn--sm">Next</button>
+          <button class="btn btn--sm btn--quiet">Withdraw verification</button>
+        </div>
+      </div>
+
+      <div class="review">
+        <div class="review__list">
+          <div class="review__listhead">
+            <span>Transcript</span>
+            <span class="hint">lowest confidence first</span>
+          </div>
+          <button class="seg-row">
+            <span class="mono">00:16.27</span>
+            <span class="seg-row__text">An individual called and she whispered,</span>
+            <span class="conf conf--low">72</span>
+          </button>
+          <button class="seg-row">
+            <span class="mono">00:19.65</span>
+            <span class="seg-row__text">please send help.</span>
+            <span class="conf conf--low">78</span>
+          </button>
+          <button class="seg-row is-active">
+            <span class="mono">00:31.62</span>
+            <span class="seg-row__text">and she was hiding in her kid's bedroom.</span>
+            <span class="conf conf--mid">86</span>
+          </button>
+          <button class="seg-row">
+            <span class="mono">00:36.44</span>
+            <span class="seg-row__text">She was three months pregnant and had three other children</span>
+            <span class="conf conf--mid">88</span>
+          </button>
+          <button class="seg-row">
+            <span class="mono">00:41.68</span>
+            <span class="seg-row__text">I got her address.</span>
+            <span class="conf conf--high">97</span>
+          </button>
+          <button class="seg-row">
+            <span class="mono">00:42.90</span>
+            <span class="seg-row__text">I told her, OK, you have to put the phone down for any reason.</span>
+            <span class="conf conf--high">95</span>
+          </button>
+          <button class="seg-row">
+            <span class="mono">00:51.40</span>
+            <span class="seg-row__text">Are you trapped at all?</span>
+            <span class="conf conf--high">98</span>
+          </button>
+        </div>
+
+        <div class="review__main">
+          <div class="review__meta">
+            <span class="mono">00:31.62 – 00:35.56</span>
+            <span class="hint">·</span>
+            <span class="hint">speaker unknown · v2</span>
+            <span class="hint" style="margin-left:auto">confidence 86%</span>
+          </div>
+
+          <div class="review__text">
+            and she was <span class="word-low">hiding</span> in her <span class="word-low">kid's</span> bedroom.
+          </div>
+
+          <div class="review__actions">
+            <button class="btn btn--sm">Correct text</button>
+            <button class="btn btn--sm">Play passage</button>
+            <button class="btn btn--sm btn--quiet">Compare denoised</button>
+          </div>
+
+          <div class="panel" style="margin-top:14px">
+            <div class="panel__head">
+              <h2>Correction</h2>
+              <span class="right hint">reason is recorded in the audit trail</span>
+            </div>
+            <div class="panel__body">
+              <div class="diff">
+                <div class="diff__row"><span class="diff__k">machine</span><span class="diff__v diff__v--old">and she was hiding in her kid's bedroom.</span></div>
+                <div class="diff__row"><span class="diff__k">current</span><span class="diff__v">and she was hiding in her <mark>child's</mark> bedroom.</span></div>
+              </div>
+              <div style="display:flex;gap:8px;margin-top:10px;align-items:center">
+                <span class="hint" style="min-width:52px">Reason</span>
+                <div class="inputlike">misheard possessive — verified against the audio at 00:32</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:14px">
+            <div class="panel__head">
+              <h2>History</h2>
+              <span class="right hint">append-only</span>
+            </div>
+            <div class="panel__body" style="padding:0">
+              <table class="tbl">
+                <tbody>
+                  <tr><td class="mono" style="width:44px">v2</td><td>R. Cardinal</td><td class="hint">kid's → child's</td><td class="num hint">10:31</td></tr>
+                  <tr><td class="mono">v1</td><td>faster-whisper</td><td class="hint">machine transcript</td><td class="num hint">10:04</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <aside class="review__aside">
+          <div class="panel">
+            <div class="panel__head">
+              <h2>Redaction</h2>
+              <span class="right hint">2 candidates</span>
+            </div>
+            <div class="panel__body" style="padding:0">
+              <div class="cue">
+                <div class="cue__top">
+                  <span class="stamp stamp--info">Person name</span>
+                  <span class="hint mono">00:33.10</span>
+                </div>
+                <div class="cue__text">"kid's" → possible third-party minor</div>
+                <div class="cue__row">
+                  <span class="hint">Reason</span>
+                  <span class="mono" style="font-size:11px">PII-MINOR</span>
+                  <span class="hint" style="margin-left:auto">0.71</span>
+                </div>
+                <div class="cue__actions">
+                  <button class="btn btn--sm btn--primary">Accept</button>
+                  <button class="btn btn--sm">Reject</button>
+                  <button class="btn btn--sm btn--quiet">Not redactable</button>
+                </div>
+              </div>
+              <div class="cue">
+                <div class="cue__top">
+                  <span class="stamp stamp--unreviewed">Address</span>
+                  <span class="hint mono">00:41.68</span>
+                </div>
+                <div class="cue__text">"her address" — reference to a street address</div>
+                <div class="cue__row">
+                  <span class="hint">Reason</span>
+                  <span class="mono" style="font-size:11px">PII-ADDR</span>
+                  <span class="hint" style="margin-left:auto">0.54</span>
+                </div>
+                <div class="cue__actions">
+                  <button class="btn btn--sm btn--primary">Accept</button>
+                  <button class="btn btn--sm">Reject</button>
+                  <button class="btn btn--sm btn--quiet">Not redactable</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin-top:14px">
+            <div class="panel__head"><h2>Custody</h2></div>
+            <div class="panel__body" style="padding:0">
+              <ol class="custody">
+                <li><span class="custody__dot"></span><div><b>Segment verified</b><div class="hint">R. Cardinal · 10:31</div></div></li>
+                <li><span class="custody__dot"></span><div><b>Text corrected</b><div class="hint">R. Cardinal · 10:31</div></div></li>
+                <li><span class="custody__dot"></span><div><b>Transcribed</b><div class="hint">faster-whisper small · 10:04</div></div></li>
+                <li><span class="custody__dot"></span><div><b>Original hashed</b><div class="hint">sha256 117c…fe5 · 10:02</div></div></li>
+              </ol>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ======================= REDACTION ======================= -->
+    <section class="view" id="view-redaction">
+      <div class="pagehead">
+        <div>
+          <h1>Redaction cue sheet</h1>
+          <p>The audio half of the redaction pipeline. Every candidate carries a reason code, a confidence and a decision that survives disclosure. Export drives the blur pass; it does not perform it.</p>
+        </div>
+        <div class="pagehead__right">
+          <button class="btn">Export CSV</button>
+          <button class="btn">Export JSON</button>
+          <button class="btn btn--primary">Send to redaction queue</button>
+        </div>
+      </div>
+
+      <div class="strip">
+        <div class="strip__cell"><div class="strip__k">Candidates</div><div class="strip__v tnum">38</div></div>
+        <div class="strip__cell"><div class="strip__k">Accepted</div><div class="strip__v tnum" style="color:var(--green)">22</div></div>
+        <div class="strip__cell"><div class="strip__k">Rejected</div><div class="strip__v tnum">9</div></div>
+        <div class="strip__cell"><div class="strip__k">Open</div><div class="strip__v tnum" style="color:var(--amber)">7</div></div>
+        <div class="strip__cell"><div class="strip__k">Exhibits covered</div><div class="strip__v tnum">3 of 6</div></div>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="panel__head">
+            <h2>E-001 · 911 call</h2>
+            <span class="right hint">rule + NER · no model training · 38 candidates from 49 segments</span>
+          </div>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:76px">Start</th>
+                <th style="width:76px">End</th>
+                <th>Span text</th>
+                <th style="width:110px">Entity</th>
+                <th style="width:96px">Reason</th>
+                <th style="width:56px" class="num">Conf</th>
+                <th style="width:104px">Decision</th>
+                <th style="width:96px">Reviewer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="mono">00:31.62</td><td class="mono">00:33.10</td>
+                <td>kid's</td><td>Minor</td><td class="mono">PII-MINOR</td>
+                <td class="num mono">0.71</td>
+                <td><span class="stamp stamp--verified">Accept</span></td>
+                <td class="hint">R. Cardinal</td>
+              </tr>
+              <tr>
+                <td class="mono">00:41.68</td><td class="mono">00:42.90</td>
+                <td>her address</td><td>Address</td><td class="mono">PII-ADDR</td>
+                <td class="num mono">0.54</td>
+                <td><span class="stamp stamp--unreviewed">Open</span></td>
+                <td class="hint">—</td>
+              </tr>
+              <tr>
+                <td class="mono">00:20.87</td><td class="mono">00:21.69</td>
+                <td>He tried to kill me.</td><td>Evidential</td><td class="mono">NOT-REDACT</td>
+                <td class="num mono">0.93</td>
+                <td><span class="stamp stamp--plain">Rejected</span></td>
+                <td class="hint">R. Cardinal</td>
+              </tr>
+              <tr>
+                <td class="mono">00:12.07</td><td class="mono">00:15.43</td>
+                <td>6 o'clock in the morning</td><td>Time</td><td class="mono">LOW-RISK</td>
+                <td class="num mono">0.31</td>
+                <td><span class="stamp stamp--plain">Rejected</span></td>
+                <td class="hint">R. Cardinal</td>
+              </tr>
+              <tr>
+                <td class="mono">00:36.44</td><td class="mono">00:40.24</td>
+                <td>three months pregnant</td><td>Medical</td><td class="mono">MED-INFO</td>
+                <td class="num mono">0.62</td>
+                <td><span class="stamp stamp--corrected">Open</span></td>
+                <td class="hint">—</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="padding:10px 14px;border-top:1px solid var(--rule);display:flex;gap:16px;align-items:center">
+            <span class="hint">Export schema</span>
+            <code class="mono" style="font-size:11px;color:var(--ink-2)">start_s, end_s, exhibit, entity_type, reason_code, decision, reviewer, decided_at</code>
+            <span class="hint" style="margin-left:auto">EDL-compatible · one row per span</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= DISCLOSURE ======================= -->
+    <section class="view" id="view-disclosure">
+      <div class="pagehead">
+        <div>
+          <h1>Disclosure bundle</h1>
+          <p>What goes to the Crown, in one package with a manifest you can defend. Clips are cut from the original, never from a derivative.</p>
+        </div>
+        <div class="pagehead__right">
+          <button class="btn">Preview cover sheet</button>
+          <button class="btn btn--primary">Build bundle</button>
+        </div>
+      </div>
+
+      <div class="grid" style="grid-template-columns:1.05fr 1.25fr .95fr">
+        <div class="panel">
+          <div class="panel__head"><h2>Contents</h2><span class="right hint">6 items · 84.2 MB</span></div>
+          <div class="panel__body" style="padding:0">
+            <table class="tbl">
+              <tbody>
+                <tr><td style="width:20px">☑</td><td>Audio clips <span class="hint">· 6 excerpts, cut from originals</span></td><td class="num mono" style="white-space:nowrap">41.8 MB</td></tr>
+                <tr><td>☑</td><td>Transcripts <span class="hint">· current text + machine text</span></td><td class="num mono" style="white-space:nowrap">1.2 MB</td></tr>
+                <tr><td>☑</td><td>Revision log <span class="hint">· every correction, who and why</span></td><td class="num mono">96 KB</td></tr>
+                <tr><td>☑</td><td>Custody record <span class="hint">· one page per exhibit</span></td><td class="num mono">412 KB</td></tr>
+                <tr><td>☑</td><td>Redaction cue sheet <span class="hint">· 38 rows, decisions included</span></td><td class="num mono">24 KB</td></tr>
+                <tr><td>☑</td><td>Manifest <span class="hint">· sha256 per file</span></td><td class="num mono">8 KB</td></tr>
+              </tbody>
+            </table>
+            <div style="padding:12px 14px;border-top:1px solid var(--rule)">
+              <div class="notice notice--warn">
+                <b>2 exhibits unverified.</b> E-004 has no reviewed segments and E-006 is 12% reviewed.
+                The bundle can be built, but the cover sheet will say so.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head"><h2>Cover sheet</h2><span class="right hint">generated</span></div>
+          <div class="panel__body" style="background:var(--surface-2)">
+            <div class="cover">
+              <div class="cover__org">Technology North · Evidence Services</div>
+              <h3>Disclosure package</h3>
+              <table class="cover__tbl">
+                <tr><td>Case</td><td class="mono">26-104772</td></tr>
+                <tr><td>Subject</td><td>Reopened 1998 homicide — audio review</td></tr>
+                <tr><td>Exhibits</td><td>E-001, E-002, E-003, E-004, E-005, E-006</td></tr>
+                <tr><td>Prepared by</td><td>R. Cardinal, reviewer</td></tr>
+                <tr><td>Prepared</td><td>2026-10-20 10:44 MDT</td></tr>
+                <tr><td>Review state</td><td>64% reviewed · 2 exhibits unverified</td></tr>
+                <tr><td>Manifest</td><td class="mono">sha256:9d2f…4c1a</td></tr>
+              </table>
+              <p class="cover__note">
+                Machine transcripts are identified per segment and are not evidence of truth.
+                Corrections and verifications are recorded with reviewer identity and time.
+                Redactions are listed in the cue sheet with reason codes; no audio in this
+                package has been altered.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel__head"><h2>Manifest</h2><span class="right hint">sha256</span></div>
+          <div class="panel__body" style="padding:0">
+            <div class="manifest mono">
+              <div><span>E-001_clip_00-31.wav</span><b>117c1734…fe5</b></div>
+              <div><span>E-001_transcript.json</span><b>8b21c004…9de</b></div>
+              <div><span>E-001_custody.pdf</span><b>d90aa711…2f7</b></div>
+              <div><span>E-002_clip_14-00.wav</span><b>4f9c2b18…a1e</b></div>
+              <div><span>cue_sheet.csv</span><b>0a77be31…c04</b></div>
+              <div><span>cover_sheet.pdf</span><b>e3c9104f…88b</b></div>
+            </div>
+            <div style="padding:12px 14px;border-top:1px solid var(--rule)">
+              <button class="btn btn--primary" style="width:100%;justify-content:center">Build bundle (84.2 MB)</button>
+              <p class="hint" style="margin:8px 0 0">Signed with the case key. Verifiable offline with <code class="mono">sha256sum -c</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= COST ======================= -->
+    <section class="view" id="view-cost">
+      <div class="pagehead">
+        <div>
+          <h1>Cost model</h1>
+          <p>Searching an archive is a purchase, not a default. This page prices three ways to answer the same question, so the customer can choose one.</p>
+        </div>
+        <div class="pagehead__right">
+          <button class="chip is-on">Archive: 3,900 tapes</button>
+          <button class="chip">100 h / day ingest</button>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="panel">
+          <div class="panel__head">
+            <h2>Three ways to find one call in 2,900 hours</h2>
+            <span class="right hint">list-price estimate · not a quote</span>
+          </div>
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:190px">Approach</th>
+                <th class="num" style="width:110px">Compute</th>
+                <th class="num" style="width:96px">Cost</th>
+                <th style="width:150px">Index coverage</th>
+                <th>Time to first answer</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><b>Full index everything</b><div class="sub">transcribe every tape once</div></td>
+                <td class="num mono">435 h</td>
+                <td class="num mono">$1,044</td>
+                <td><div class="bar"><i style="width:100%"></i></div><span class="hint">100%</span></td>
+                <td class="hint">minutes, forever</td>
+              </tr>
+              <tr>
+                <td><b>Windowed promotion</b><div class="sub">4 min per tape, on request</div></td>
+                <td class="num mono">39 h</td>
+                <td class="num mono">$94</td>
+                <td><div class="bar" style="width:10%"><i style="width:100%"></i></div><span class="hint">10% · grows as asked</span></td>
+                <td class="hint">one tape at a time</td>
+              </tr>
+              <tr style="background:var(--wash)">
+                <td><b>Spotting pass, then ASR</b><div class="sub">cheap scan, full ASR on winners</div></td>
+                <td class="num mono">58 h</td>
+                <td class="num mono">$142</td>
+                <td><div class="bar" style="width:14%"><i style="width:100%"></i></div><span class="hint">14% · the hits</span></td>
+                <td class="hint">hours, archive-wide</td>
+              </tr>
+            </tbody>
+          </table>
+          <div style="padding:12px 14px;border-top:1px solid var(--rule);display:flex;gap:24px">
+            <div><div class="strip__k">Measured on this machine</div><div class="hint">0.15 RTF · small model · CPU int8</div></div>
+            <div><div class="strip__k">Storage per audio hour</div><div class="hint">original 0.21 GB · working 0.11 GB · index 0.4 MB</div></div>
+            <div><div class="strip__k">Break-even</div><div class="hint">spotting pays for itself above 12 tapes</div></div>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+          <div class="panel">
+            <div class="panel__head"><h2>What this buys</h2></div>
+            <div class="panel__body">
+              <p style="margin:0 0 10px;color:var(--ink-2)">
+                At 100 hours of new 911 audio a day, a full index costs about
+                <strong>$36 a day</strong> and buys nothing until someone searches it.
+                Windowed promotion costs <strong>$0.24 per tape</strong> and answers the
+                reopened case in four minutes.
+              </p>
+              <div class="divider"></div>
+              <div style="display:flex;justify-content:space-between">
+                <span class="hint">Per audio hour, full index</span><span class="mono">$0.36</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:4px">
+                <span class="hint">Per audio hour, windowed</span><span class="mono">$0.03</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-top:4px">
+                <span class="hint">Per audio hour, spotting</span><span class="mono">$0.02</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel__head"><h2>Where it breaks</h2></div>
+            <div class="panel__body">
+              <ul style="margin:0;padding-left:16px;color:var(--ink-2);font-size:12px;line-height:1.7">
+                <li>Spotting is a prototype: recall measured on 40 tapes, not 3,900.</li>
+                <li>Overlapping speech still defeats the windowing heuristic.</li>
+                <li>Above 1M segments, SQLite FTS gives way to Postgres; p95 was not measured.</li>
+                <li>Denoising is skipped on triage — it costs more than transcription.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+<script>
+(function () {
+  var views = ["cases", "evidence", "find", "review", "redaction", "disclosure", "cost"];
+
+  function show(name) {
+    if (views.indexOf(name) === -1) return;
+    views.forEach(function (v) {
+      var el = document.getElementById("view-" + v);
+      if (el) el.classList.toggle("is-active", v === name);
+    });
+    document.querySelectorAll(".rail__item").forEach(function (b) {
+      b.classList.toggle("is-active", b.dataset.view === name);
+    });
+    document.querySelector(".main").scrollTop = 0;
+    if (location.hash !== "#" + name) history.replaceState(null, "", "#" + name);
+  }
+
+  document.querySelectorAll(".rail__item").forEach(function (b) {
+    b.addEventListener("click", function () { show(b.dataset.view); });
+  });
+  document.querySelectorAll("[data-go]").forEach(function (el) {
+    el.addEventListener("click", function () { show(el.dataset.go); });
+  });
+
+  // Waveform: deterministic pseudo-random bars, first third marked as played.
+  var wave = document.getElementById("wave");
+  if (wave) {
+    for (var i = 0; i < 110; i++) {
+      var h = 4 + Math.abs(Math.sin(i * 1.7) * Math.cos(i * 0.31)) * 22;
+      var s = document.createElement("span");
+      s.style.height = h.toFixed(1) + "px";
+      if (i < 36) s.className = "is-played";
+      wave.appendChild(s);
+    }
+  }
+
+  // "/" focuses the query, Escape returns to the case list.
+  document.addEventListener("keydown", function (e) {
+    var q = document.getElementById("q");
+    if (e.key === "/" && q && document.activeElement !== q) {
+      e.preventDefault();
+      show("find");
+      q.focus();
+      q.select();
+    }
+    if (e.key === "Escape") { show("cases"); document.activeElement.blur(); }
+  });
+
+  var initial = location.hash.replace("#", "");
+  show(views.indexOf(initial) > -1 ? initial : "cases");
+})();
+</script>
+</body>
+</html>

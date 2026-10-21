@@ -39,7 +39,7 @@ export function formatDate(value: string | null | undefined): string {
 }
 
 export const REVIEW_LABELS: Record<string, string> = {
-  ai_generated: "AI generated",
+  ai_generated: "Unreviewed",
   in_review: "In review",
   corrected: "Corrected",
   verified: "Verified",
@@ -67,4 +67,30 @@ export function highlightTerms(text: string, terms: string[]): { text: string; m
   }
   if (cursor < text.length) parts.push({ text: text.slice(cursor), match: false });
   return parts;
+}
+
+/** "2:39" or "1:02:11" — for lengths, not timecodes. */
+export function formatDuration(seconds: number | null | undefined): string {
+  if (seconds === null || seconds === undefined || Number.isNaN(seconds)) return "—";
+  const total = Math.round(Math.max(0, seconds));
+  const hours = Math.floor(total / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const secs = total % 60;
+  if (hours > 0) return `${hours}:${String(minutes).padStart(2, "0")}:${String(secs).padStart(2, "0")}`;
+  return `${minutes}:${String(secs).padStart(2, "0")}`;
+}
+
+/** Disclosure pressure in words, because "in 2 days" reads faster than a date. */
+export function daysLabel(days: number | null | undefined): string {
+  if (days === null || days === undefined) return "not set";
+  if (days < 0) return `${Math.abs(days)} d overdue`;
+  if (days === 0) return "today";
+  if (days === 1) return "in 1 day";
+  return `in ${days} days`;
+}
+
+export function formatHours(hours: number | null | undefined): string {
+  if (hours === null || hours === undefined) return "—";
+  if (hours < 1) return `${Math.round(hours * 60)} m`;
+  return `${hours.toFixed(1)} h`;
 }

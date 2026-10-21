@@ -15,22 +15,27 @@ dist/
 .env.local
 
 # data: never commit evidence, derivatives, or the demo database
-data/app.db
-data/app.db-*
+# The bare `app.db` pattern is not enough on its own: running a script from
+# `backend/` creates `backend/app.db`, which sat untracked (and empty) for a
+# while because only `data/app.db` was listed.
+app.db
+app.db-*
 data/originals/
 data/working/
 data/denoised/
 data/exports/
-!data/samples/
+
+# Public audio library: the provenance note is committed, the audio is not.
+# Rebuild the clips with scripts/fetch_public_audio.sh
+data/public-audio/*.wav
+data/public-audio/*.flac
+data/public-audio/*.mp3
 
 # os
 .DS_Store
 
 # tool caches
 .ruff_cache/
-
-# generated TTS cache (regenerable)
-data/samples/.tts-cache/
 
 # Large real-audio binaries. The transcripts, scripts and README are committed
 # so the measurement is reproducible; the 33 MB press-conference audio is not.

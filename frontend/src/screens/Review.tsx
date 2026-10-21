@@ -1,113 +1,113 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { api } from "../api";
-import AudioPlayer from "../components/AudioPlayer";
-import { Notice, ReviewBadge, SourceTag } from "../components/Badges";
+import { Empty, Notice, Panel } from "../components/Layout";
+import { ConfidenceChip, ReviewStamp, Stamp } from "../components/Stamp";
+import CustodyList from "../components/CustodyList";
+import type { CustodyEvent } from "../components/CustodyList";
+import PlayerDock from "../components/PlayerDock";
 import { formatDate, formatTimecode } from "../lib/format";
-import type {
-  Comparison,
-  Provenance,
-  Recording,
-  Segment,
-  SegmentHistory,
-  Transcript,
-} from "../types";
+import type { CaseFile, Cue, CueDecision, Provenance, Segment, SegmentHistory } from "../types";
 
-interface ReviewProps {
-  recordingId: string;
+export default function Review({
+  caseFile,
+  recordingId,
+  focusSegmentId,
+  onSelectRecording,
+  onChanged,
+}: {
+  caseFile: CaseFile;
+  recordingId: string | null;
   focusSegmentId?: string | null;
-  focusStart?: number | null;
-  onBack: () => void;
-}
+  onSelectRecording: (recordingId: string) => void;
+  onChanged: () => Promise<void> | void;
+}) {
+  const indexed = useMemo(
+    () => caseFile.exhibits.filter((exhibit) => exhibit.indexed !== "none"),
+    [caseFile.exhibits],
+  );
 
-export default function Review({ recordingId, focusSegmentId, focusStart, onBack }: ReviewProps) {
-  const [recording, setRecording] = useState<Recording | null>(null);
-  const [transcript, setTranscript] = useState<Transcript | null>(null);
+  // Opening Review with no exhibit in the URL lands on the first indexed one.
+  useEffect(() => {
+    if (!recordingId && indexed[0]) onSelectRecording(indexed[0].id);
+  }, [recordingId, indexed, onSelectRecording]);
+
   const [segments, setSegments] = useState<Segment[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [jumpTo, setJumpTo] = useState<number | null>(focusStart ?? null);
-  const [jumpToken, setJumpToken] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
+  const [cues, setCues] = useState<Cue[]>([]);
+  const [provenance, setProvenance] = useState<Provenance | null>(null);
+  const [history, setHistory] = useState<SegmentHistory | null>(null);
   const [draft, setDraft] = useState<string | null>(null);
   const [note, setNote] = useState("");
-  const [history, setHistory] = useState<SegmentHistory | null>(null);
-  const [comparison, setComparison] = useState<Comparison | null>(null);
-  const [showComparison, setShowComparison] = useState(false);
-  const [provenance, setProvenance] = useState<Provenance | null>(null);
-  const [showProvenance, setShowProvenance] = useState(false);
-  const [denoising, setDenoising] = useState(false);
+  const [jumpTo, setJumpTo] = useState<number | null>(null);
+  const [jumpToken, setJumpToken] = useState(0);
+  const [needsReviewOnly, setNeedsReviewOnly] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [deciding, setDeciding] = useState<Set<string>>(new Set());
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
+
+  const exhibitIndex = caseFile.exhibits.findIndex((exhibit) => exhibit.id === recordingId);
+  const exhibit = caseFile.exhibits[exhibitIndex];
+  const label = exhibitIndex >= 0 ? `E-${String(exhibitIndex + 1).padStart(3, "0")}` : "—";
+
+  const loadCues = useCallback(async () => {
+    if (!recordingId) return;
+    try {
+      setCues(await api.cues(caseFile.id, { recording_id: recordingId }));
+    } catch {
+      setCues([]);
+    }
+  }, [caseFile.id, recordingId]);
+
+  useEffect(() => {
+    if (!recordingId) return;
+    let cancelled = false;
+    setError(null);
+    setDraft(null);
+    (async () => {
+      try {
+        const transcript = await api.transcript(recordingId);
+        if (cancelled) return;
+        setSegments(transcript.segments);
+        const focus =
+          transcript.segments.find((segment) => segment.id === focusSegmentId) ??
+          transcript.segments[0] ??
+          null;
+        setSelectedId(focus?.id ?? null);
+        setJumpTo(focus?.start_s ?? null);
+        setJumpToken((token) => token + 1);
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : "Could not load the transcript");
+      }
+    })();
+    void loadCues();
+    api.provenance(recordingId).then(setProvenance).catch(() => setProvenance(null));
+    return () => {
+      cancelled = true;
+    };
+  }, [recordingId, focusSegmentId, loadCues]);
 
   const selected = useMemo(
     () => segments.find((segment) => segment.id === selectedId) ?? null,
     [segments, selectedId],
   );
 
-  const refreshRecording = useCallback(async () => {
-    try {
-      setRecording(await api.getRecording(recordingId));
-    } catch {
-      /* non-fatal */
-    }
-  }, [recordingId]);
-
-  const refreshHistory = useCallback(async (segmentId: string) => {
-    try {
-      setHistory(await api.history(segmentId));
-    } catch {
-      setHistory(null);
-    }
-  }, []);
-
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      try {
-        const [record, tr] = await Promise.all([
-          api.getRecording(recordingId),
-          api.transcript(recordingId),
-        ]);
-        if (cancelled) return;
-        setRecording(record);
-        setTranscript(tr);
-        setSegments(tr.segments);
-
-        const initial =
-          tr.segments.find((segment) => segment.id === focusSegmentId) ?? tr.segments[0] ?? null;
-        if (initial) {
-          setSelectedId(initial.id);
-          setJumpTo(focusStart ?? initial.start_s);
-          setJumpToken((token) => token + 1);
-        }
-      } catch (err) {
-        if (!cancelled) setError(err instanceof Error ? err.message : "Could not load recording");
-      }
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [recordingId, focusSegmentId, focusStart]);
-
-  useEffect(() => {
-    if (selectedId) void refreshHistory(selectedId);
-  }, [selectedId, refreshHistory]);
-
   useEffect(() => {
     if (!selectedId) return;
-    const element = document.getElementById(`segment-${selectedId}`);
-    element?.scrollIntoView({ block: "nearest", behavior: "smooth" });
-  }, [selectedId]);
+    api.history(selectedId).then(setHistory).catch(() => setHistory(null));
+  }, [selectedId, segments]);
 
-  const selectSegment = (segment: Segment, seek = true) => {
+  const visible = needsReviewOnly
+    ? segments.filter((segment) => segment.review_status === "ai_generated")
+    : segments;
+
+  const select = (segment: Segment) => {
     setSelectedId(segment.id);
     setDraft(null);
     setNote("");
     setNotice(null);
-    if (seek) {
-      setJumpTo(segment.start_s);
-      setJumpToken((token) => token + 1);
-    }
+    setJumpTo(segment.start_s);
+    setJumpToken((token) => token + 1);
   };
 
   const saveCorrection = async () => {
@@ -116,14 +116,12 @@ export default function Review({ recordingId, focusSegmentId, focusStart, onBack
     setError(null);
     try {
       const updated = await api.updateSegment(selected.id, draft, note || undefined);
-      setSegments((previous) =>
-        previous.map((segment) => (segment.id === updated.id ? updated : segment)),
-      );
+      setSegments((previous) => previous.map((item) => (item.id === updated.id ? updated : item)));
       setDraft(null);
       setNote("");
       setNotice("Correction saved. Verification is a separate action.");
-      await refreshHistory(updated.id);
-      await refreshRecording();
+      await onChanged();
+      await loadCues();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not save the correction");
     } finally {
@@ -137,17 +135,10 @@ export default function Review({ recordingId, focusSegmentId, focusStart, onBack
     setError(null);
     try {
       const updated = await api.verifySegment(selected.id, verified, note || undefined);
-      setSegments((previous) =>
-        previous.map((segment) => (segment.id === updated.id ? updated : segment)),
-      );
+      setSegments((previous) => previous.map((item) => (item.id === updated.id ? updated : item)));
       setNote("");
-      setNotice(
-        verified
-          ? `Segment verified by ${updated.verified_by}.`
-          : "Verification withdrawn.",
-      );
-      await refreshHistory(updated.id);
-      await refreshRecording();
+      setNotice(verified ? `Segment verified by ${updated.verified_by}.` : "Verification withdrawn.");
+      await onChanged();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not change verification");
     } finally {
@@ -160,12 +151,9 @@ export default function Review({ recordingId, focusSegmentId, focusStart, onBack
     setBusy(true);
     try {
       const updated = await api.reopenSegment(selected.id);
-      setSegments((previous) =>
-        previous.map((segment) => (segment.id === updated.id ? updated : segment)),
-      );
+      setSegments((previous) => previous.map((item) => (item.id === updated.id ? updated : item)));
       setNotice("Segment reopened for review. Any verification was withdrawn.");
-      await refreshHistory(updated.id);
-      await refreshRecording();
+      await onChanged();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Could not reopen the segment");
     } finally {
@@ -173,367 +161,183 @@ export default function Review({ recordingId, focusSegmentId, focusStart, onBack
     }
   };
 
-  const toggleComparison = async () => {
-    if (showComparison) {
-      setShowComparison(false);
-      return;
-    }
-    if (!comparison) {
-      try {
-        setComparison(await api.comparison(recordingId));
-      } catch {
-        setComparison(null);
-      }
-    }
-    setShowComparison(true);
-  };
-
-  const runDenoise = async () => {
-    setDenoising(true);
+  // A cue decision is a small write but an auditable one: a double click used to
+  // post twice and produce two audit entries for one decision. Guard per cue so
+  // deciding one span never blocks the others, and ignore a repeat while the
+  // first request is still in flight.
+  const decide = async (cue: Cue, decision: CueDecision) => {
+    if (deciding.has(cue.id)) return;
+    if (cue.decision === decision) return;
+    setDeciding((previous) => new Set(previous).add(cue.id));
     setError(null);
-    setNotice(null);
     try {
-      const updated = await api.denoise(recordingId);
-      setRecording(updated);
-      setNotice("Denoised derivative ready — A/B the player to hear the difference.");
-      // Refresh the comparison so the denoised transcript, if produced, is shown.
-      setComparison(null);
-      if (showComparison) {
-        try {
-          setComparison(await api.comparison(recordingId));
-        } catch {
-          setComparison(null);
-        }
-      }
+      const updated = await api.decideCue(cue.id, decision);
+      setCues((previous) => previous.map((item) => (item.id === updated.id ? updated : item)));
+      await onChanged();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not denoise this recording");
+      setError(err instanceof Error ? err.message : "Could not record the decision");
     } finally {
-      setDenoising(false);
+      setDeciding((previous) => {
+        const next = new Set(previous);
+        next.delete(cue.id);
+        return next;
+      });
     }
   };
 
-  const toggleProvenance = async () => {
-    if (showProvenance) {
-      setShowProvenance(false);
-      return;
-    }
-    try {
-      setProvenance(await api.provenance(recordingId));
-    } catch {
-      setProvenance(null);
-    }
-    setShowProvenance(true);
-  };
+  const segmentCues = cues.filter((cue) => cue.segment_id === selectedId);
+  const openCues = cues.filter((cue) => cue.decision === "open").length;
 
-  const activeId = useMemo(() => {
-    const active = segments.find(
-      (segment) => currentTime >= segment.start_s && currentTime < segment.end_s,
+  const events: CustodyEvent[] =
+    provenance?.steps
+      .slice()
+      .reverse()
+      .slice(0, 4)
+      .map((step) => ({
+        label: step.label,
+        detail: [step.actor, step.at ? formatDate(step.at) : null].filter(Boolean).join(" · "),
+      })) ?? [];
+
+  if (!exhibit) {
+    return (
+      <div className="view">
+        <Empty>
+          No indexed exhibit in this case yet. Promote a recording from Evidence, then review it.
+        </Empty>
+      </div>
     );
-    return active?.id ?? null;
-  }, [segments, currentTime]);
-
-  const verifiedCount = segments.filter((segment) => segment.review_status === "verified").length;
-  const correctedCount = segments.filter((segment) => segment.review_status === "corrected").length;
+  }
 
   return (
-    <div className="screen screen--review">
-      <section className="panel panel--reviewhead">
-        <div className="reviewhead">
-          <button className="btn btn--ghost btn--small" type="button" onClick={onBack}>
-            ← Back
+    <div className="view" style={{ paddingBottom: 64 }}>
+      <div className="reviewbar">
+        <div className="reviewbar__left">
+          <select
+            className="btn btn--sm"
+            value={recordingId ?? ""}
+            onChange={(event) => onSelectRecording(event.target.value)}
+            aria-label="Exhibit"
+            style={{ maxWidth: 320 }}
+          >
+            {indexed.map((item) => (
+              <option key={item.id} value={item.id}>
+                E-{String(caseFile.exhibits.indexOf(item) + 1).padStart(3, "0")} · {item.filename}
+              </option>
+            ))}
+          </select>
+          {selected && (
+            <span className="mono hint">
+              segment {segments.findIndex((item) => item.id === selected.id) + 1} of {segments.length}
+            </span>
+          )}
+        </div>
+        <div className="reviewbar__right">
+          {selected && <ReviewStamp status={selected.review_status} />}
+          <button
+            className={`chip ${needsReviewOnly ? "is-on" : ""}`}
+            onClick={() => setNeedsReviewOnly((value) => !value)}
+            title="Show only segments nobody has reviewed"
+          >
+            Needs review
           </button>
-          <div className="reviewhead__main">
-            <h2>{recording?.filename ?? "Loading…"}</h2>
-            <div className="reviewhead__meta">
-              {recording && <SourceTag source={recording.source_type} />}
-              {recording?.recorded_at && (
-                <span className="dim small">{formatDate(recording.recorded_at)}</span>
-              )}
-              {transcript && (
-                <span className="tag tag--engine">
-                  {transcript.engine} · {transcript.model_version}
-                </span>
-              )}
-              <span className="dim small">
-                {segments.length} segments · {verifiedCount} verified · {correctedCount} corrected
+        </div>
+      </div>
+
+      {error && (
+        <div style={{ padding: "10px 24px 0" }}>
+          <Notice tone="error">{error}</Notice>
+        </div>
+      )}
+      {notice && (
+        <div style={{ padding: "10px 24px 0" }}>
+          <Notice tone="info">{notice}</Notice>
+        </div>
+      )}
+
+      <div className="review">
+        <div className="review__list">
+          <div className="review__listhead">
+            <span>Transcript</span>
+            <span>{visible.length} segments</span>
+          </div>
+          {visible.length === 0 && <Empty>Nothing in this filter.</Empty>}
+          {visible.map((segment) => (
+            <button
+              key={segment.id}
+              data-segment-id={segment.id}
+              className={`seg-row ${segment.id === selectedId ? "is-active" : ""}`}
+              onClick={() => select(segment)}
+            >
+              <span className="mono">{formatTimecode(segment.start_s)}</span>
+              <span className="seg-row__text">
+                {segment.text || <em>empty</em>}
+                {segment.edited && <span className="hint"> · edited</span>}
               </span>
-            </div>
-          </div>
-          <div className="reviewhead__actions">
-            {recording && !recording.has_denoised && (
-              <button
-                className="btn btn--primary btn--small"
-                type="button"
-                onClick={() => void runDenoise()}
-                disabled={denoising || busy}
-                title="Clean up the noise floor so speech is easier to hear and the recogniser has less to fight"
+              <span
+                className={`conf ${
+                  segment.review_status === "verified"
+                    ? "conf--high"
+                    : segment.review_status === "corrected"
+                      ? "conf--mid"
+                      : "conf--low"
+                }`}
+                title={segment.review_status}
               >
-                {denoising ? "Denoising…" : "✦ Denoise this recording"}
-              </button>
-            )}
-            <button
-              className={`btn btn--small ${showComparison ? "btn--primary" : "btn--ghost"}`}
-              type="button"
-              onClick={() => void toggleComparison()}
-            >
-              Original vs denoised
+                {segment.review_status === "verified"
+                  ? "✓"
+                  : segment.review_status === "corrected"
+                    ? "✎"
+                    : "•"}
+              </span>
             </button>
-            <button
-              className={`btn btn--small ${showProvenance ? "btn--primary" : "btn--ghost"}`}
-              type="button"
-              onClick={() => void toggleProvenance()}
-            >
-              Chain of custody
-            </button>
-          </div>
+          ))}
         </div>
 
-        {transcript?.is_reference_copy && (
-          <Notice tone="warn">
-            This transcript is a reference copy, not an independent ASR pass.{" "}
-            {String(transcript.settings.note ?? "")}
-          </Notice>
-        )}
-        {error && <Notice tone="error">{error}</Notice>}
-        {notice && <Notice tone="info">{notice}</Notice>}
-      </section>
-
-      {showProvenance && (
-        <section className="panel">
-          <header className="panel__head panel__head--tight">
-            <div>
-              <h2>Chain of custody</h2>
-              <p className="muted small">
-                Every stage recorded against this file — who did what, and when. The original is
-                hashed on receipt and never modified.
-              </p>
-            </div>
-          </header>
-          {!provenance ? (
-            <Notice tone="info">Custody record is not available for this recording.</Notice>
+        <div className="review__main">
+          {!selected ? (
+            <Empty>Select a transcript line to review it.</Empty>
           ) : (
             <>
-              <div className="custody__meta">
-                <div>
-                  <span className="custody__k">Intake</span>
-                  <span className="custody__v">
-                    {provenance.intake_mode === "triage"
-                      ? "Triaged — registered, not yet indexed"
-                      : provenance.intake_mode === "triage_promoted"
-                        ? "Triaged on receipt, later indexed for a case"
-                        : "Full transcription and indexing on receipt"}
-                  </span>
-                </div>
-                <div>
-                  <span className="custody__k">SHA-256</span>
-                  <span className="custody__v mono small">{provenance.sha256}</span>
-                </div>
+              <div className="review__meta">
+                <span className="mono">
+                  {formatTimecode(selected.start_s)} – {formatTimecode(selected.end_s)}
+                </span>
+                <span className="hint">·</span>
+                <span className="hint">
+                  {selected.speaker ?? "speaker unknown"} · v{selected.version}
+                </span>
+                <span className="hint" style={{ marginLeft: "auto" }}>
+                  {segmentCues.length} redaction candidate{segmentCues.length === 1 ? "" : "s"}
+                </span>
               </div>
-              <ol className="custody">
-                {provenance.steps.map((step, index) => (
-                  <li className="custody__step" key={`${step.stage}-${index}`}>
-                    <span className="custody__dot" aria-hidden />
-                    <div className="custody__body">
-                      <div className="custody__label">
-                        {step.label}
-                        {Number(step.detail?.count ?? 1) > 1 && (
-                          <span className="custody__count"> ×{String(step.detail.count)}</span>
-                        )}
-                      </div>
-                      <div className="custody__sub dim small">
-                        {step.actor ? `${step.actor}${step.role ? ` (${step.role})` : ""} · ` : ""}
-                        {step.at ? formatDate(step.at) : "time not recorded"}
-                      </div>
-                    </div>
-                  </li>
-                ))}
-                {provenance.steps.length === 0 && (
-                  <li className="dim small">No custody events recorded yet.</li>
-                )}
-              </ol>
-            </>
-          )}
-        </section>
-      )}
 
-      {showComparison && (
-        <section className="panel">
-          <header className="panel__head panel__head--tight">
-            <div>
-              <h2>Original vs denoised</h2>
-              <p className="muted small">
-                Denoising is never assumed to improve recognition. The original transcript stays
-                the reference.
-              </p>
-            </div>
-          </header>
-          {!comparison || !comparison.available ? (
-            <Notice tone="info">
-              {comparison?.reason ?? "Comparison is not available for this recording."}
-            </Notice>
-          ) : (
-            <>
-              {comparison.denoised_is_reference_copy && (
-                <Notice tone="warn">
-                  The denoised transcript is a reference copy — this comparison shows no
-                  recognition difference.
-                </Notice>
-              )}
-              <div className="comparison">
-                <div className="comparison__head">
-                  <span>Time</span>
-                  <span>Original ({comparison.original_engine})</span>
-                  <span>Denoised ({comparison.denoised_engine})</span>
-                  <span>Similarity</span>
-                </div>
-                {comparison.rows.map((row) => (
-                  <div className="comparison__row" key={row.idx}>
-                    <span className="mono small">{formatTimecode(row.start_s)}</span>
-                    <span>{row.original_text}</span>
-                    <span className="dim">{row.denoised_text || "—"}</span>
-                    <span className="mono small">
-                      {row.similarity === null ? "—" : row.similarity.toFixed(2)}
-                    </span>
-                  </div>
-                ))}
+              <div className="review__text">
+                {selected.text || <em>empty segment</em>}
               </div>
-            </>
-          )}
-        </section>
-      )}
 
-      <div className="review-layout">
-        <section className="panel panel--transcript">
-          <header className="panel__head panel__head--tight">
-            <h2>Transcript</h2>
-            <span className="dim small">Click a line to seek the recording</span>
-          </header>
-
-          <div className="transcript">
-            {segments.map((segment) => {
-              const isActive = segment.id === activeId;
-              const isSelected = segment.id === selectedId;
-              return (
+              <div className="review__actions">
                 <button
-                  key={segment.id}
-                  id={`segment-${segment.id}`}
-                  type="button"
-                  className={`line ${isSelected ? "is-selected" : ""} ${isActive ? "is-playing" : ""}`}
-                  onClick={() => selectSegment(segment)}
+                  className="btn btn--sm"
+                  onClick={() => {
+                    setDraft(selected.text);
+                    setNote("");
+                  }}
+                  disabled={draft !== null}
                 >
-                  <span className="line__time mono">{formatTimecode(segment.start_s)}</span>
-                  <span className="line__body">
-                    <span className="line__speaker">
-                      {segment.speaker ?? "unlabelled"}
-                      {segment.edited && <span className="line__edited">edited</span>}
-                    </span>
-                    <span className="line__text">{segment.text || <em>empty</em>}</span>
-                  </span>
-                  <span className="line__status">
-                    <ReviewBadge status={segment.review_status} />
-                  </span>
+                  Correct text
                 </button>
-              );
-            })}
-            {segments.length === 0 && <div className="empty">No transcript for this recording.</div>}
-          </div>
-        </section>
-
-        <aside className="panel panel--detail">
-          <AudioPlayer
-            src={api.audioUrl(recordingId)}
-            altSrc={recording?.has_denoised ? api.audioUrl(recordingId, "denoised") : null}
-            altLabel="Denoised"
-            primaryLabel="Original"
-            jumpTo={jumpTo}
-            jumpToken={jumpToken}
-            onTime={setCurrentTime}
-            title="Original recording"
-            subtitle={
-              recording?.has_denoised
-                ? "Switch between the original and the denoised derivative at the same position"
-                : "Playback always uses the unmodified source file"
-            }
-            compact
-          />
-
-          {selected ? (
-            <>
-              <div className="detail__head">
-                <div>
-                  <div className="detail__time mono">
-                    {formatTimecode(selected.start_s)} – {formatTimecode(selected.end_s)}
-                  </div>
-                  <div className="dim small">
-                    {selected.speaker ?? "unlabelled"} · v{selected.version}
-                  </div>
-                </div>
-                <ReviewBadge status={selected.review_status} />
-              </div>
-
-              {draft === null ? (
-                <div className="detail__text">{selected.text || <em>empty segment</em>}</div>
-              ) : (
-                <div className="editor">
-                  <textarea
-                    value={draft}
-                    onChange={(event) => setDraft(event.target.value)}
-                    rows={5}
-                    aria-label="Corrected transcript text"
-                  />
-                  <input
-                    className="input"
-                    placeholder="Reason for the correction (recorded in the audit trail)"
-                    value={note}
-                    onChange={(event) => setNote(event.target.value)}
-                  />
-                  <div className="editor__actions">
-                    <button
-                      className="btn btn--primary btn--small"
-                      type="button"
-                      onClick={() => void saveCorrection()}
-                      disabled={busy}
-                    >
-                      Save correction
-                    </button>
-                    <button
-                      className="btn btn--ghost btn--small"
-                      type="button"
-                      onClick={() => {
-                        setDraft(null);
-                        setNote("");
-                      }}
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {selected.edited && (
-                <div className="ai-original">
-                  <div className="ai-original__label">AI generated (preserved)</div>
-                  <p>{selected.ai_text}</p>
-                </div>
-              )}
-
-              <div className="detail__actions">
-                {draft === null && (
-                  <button
-                    className="btn btn--small"
-                    type="button"
-                    onClick={() => {
-                      setDraft(selected.text);
-                      setNote("");
-                    }}
-                  >
-                    Correct text
-                  </button>
-                )}
+                <button
+                  className="btn btn--sm"
+                  onClick={() => {
+                    setJumpTo(selected.start_s);
+                    setJumpToken((token) => token + 1);
+                  }}
+                >
+                  Play passage
+                </button>
                 {selected.review_status !== "verified" ? (
                   <button
-                    className="btn btn--primary btn--small"
-                    type="button"
+                    className="btn btn--sm btn--primary"
                     onClick={() => void setVerification(true)}
                     disabled={busy}
                   >
@@ -541,70 +345,208 @@ export default function Review({ recordingId, focusSegmentId, focusStart, onBack
                   </button>
                 ) : (
                   <button
-                    className="btn btn--ghost btn--small"
-                    type="button"
+                    className="btn btn--sm"
                     onClick={() => void setVerification(false)}
                     disabled={busy}
                   >
                     Withdraw verification
                   </button>
                 )}
-                <button
-                  className="btn btn--ghost btn--small"
-                  type="button"
-                  onClick={() => void reopen()}
-                  disabled={busy}
-                >
+                <button className="btn btn--sm btn--quiet" onClick={() => void reopen()} disabled={busy}>
                   Reopen
                 </button>
               </div>
 
+              {draft !== null && (
+                <div className="panel" style={{ marginTop: 14 }}>
+                  <div className="panel__head">
+                    <h2>Correction</h2>
+                    <span className="right hint">reason is recorded in the audit trail</span>
+                  </div>
+                  <div className="panel__body">
+                    <div className="diff__row">
+                      <span className="diff__k">machine</span>
+                      <span className="diff__v--old">{selected.ai_text}</span>
+                    </div>
+                    <label className="field" style={{ marginTop: 8 }}>
+                      <span>Corrected text</span>
+                      <textarea value={draft} onChange={(event) => setDraft(event.target.value)} rows={4} />
+                    </label>
+                    <label className="field" style={{ marginTop: 8 }}>
+                      <span>Reason (required for the audit trail)</span>
+                      <input
+                        value={note}
+                        onChange={(event) => setNote(event.target.value)}
+                        placeholder="misheard name, verified against the audio at 00:32"
+                      />
+                    </label>
+                    <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
+                      <button
+                        className="btn btn--sm btn--primary"
+                        onClick={() => void saveCorrection()}
+                        disabled={busy || draft === selected.text}
+                      >
+                        Save correction
+                      </button>
+                      <button
+                        className="btn btn--sm btn--quiet"
+                        onClick={() => {
+                          setDraft(null);
+                          setNote("");
+                        }}
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {selected.verified_by && (
-                <p className="dim small">
+                <p className="hint" style={{ marginTop: 10 }}>
                   Verified by {selected.verified_by} on {formatDate(selected.verified_at)}
                 </p>
               )}
 
-              <div className="history">
-                <div className="history__head">History</div>
-                {history && history.revisions.length === 0 && history.events.length === 0 && (
-                  <p className="dim small">No changes recorded yet.</p>
+              <div className="panel" style={{ marginTop: 14 }}>
+                <div className="panel__head">
+                  <h2>History</h2>
+                  <span className="right hint">append-only</span>
+                </div>
+                {history && history.revisions.length === 0 && history.events.length === 0 ? (
+                  <div className="panel__body">
+                    <p className="hint" style={{ margin: 0 }}>
+                      No changes recorded yet. The machine transcript stands as produced.
+                    </p>
+                  </div>
+                ) : (
+                  <table className="tbl">
+                    <tbody>
+                      {history?.revisions.map((revision) => (
+                        <tr key={revision.id}>
+                          <td className="mono" style={{ width: 44 }}>
+                            v{revision.version}
+                          </td>
+                          <td style={{ width: 130 }}>{revision.actor}</td>
+                          <td>
+                            <span className="hint">{revision.prev_text || "—"}</span> →{" "}
+                            {revision.new_text || "—"}
+                            {revision.note && <div className="hint">“{revision.note}”</div>}
+                          </td>
+                          <td className="num hint" style={{ width: 110 }}>
+                            {formatDate(revision.created_at)}
+                          </td>
+                        </tr>
+                      ))}
+                      {history?.events
+                        .filter((event) => event.action !== "segment.edited")
+                        .slice(0, 5)
+                        .map((event) => (
+                          <tr key={event.id}>
+                            <td className="mono hint">·</td>
+                            <td>{event.actor}</td>
+                            <td className="hint">{event.action}</td>
+                            <td className="num hint">{formatDate(event.ts)}</td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
                 )}
-                <ul className="history__list">
-                  {history?.revisions.map((revision) => (
-                    <li key={revision.id} className="history__item">
-                      <div className="history__row">
-                        <span className="mono small">v{revision.version}</span>
-                        <span className="small">{revision.actor}</span>
-                        <span className="dim small">{formatDate(revision.created_at)}</span>
-                      </div>
-                      <div className="history__diff">
-                        <span className="history__prev">{revision.prev_text || "—"}</span>
-                        <span className="history__arrow">→</span>
-                        <span className="history__next">{revision.new_text || "—"}</span>
-                      </div>
-                      {revision.note && <div className="dim small">“{revision.note}”</div>}
-                    </li>
-                  ))}
-                  {history?.events
-                    .filter((event) => event.action !== "segment.edited")
-                    .map((event) => (
-                      <li key={event.id} className="history__item history__item--event">
-                        <div className="history__row">
-                          <span className="mono small">{event.action}</span>
-                          <span className="small">{event.actor}</span>
-                          <span className="dim small">{formatDate(event.ts)}</span>
-                        </div>
-                      </li>
-                    ))}
-                </ul>
               </div>
             </>
-          ) : (
-            <div className="empty">Select a transcript line to review it.</div>
           )}
+        </div>
+
+        <aside className="review__aside">
+          <Panel
+            title="Redaction"
+            right={<span className="hint">{segmentCues.length} here · {openCues} open in exhibit</span>}
+            flush
+          >
+            {segmentCues.length === 0 && (
+              <p className="hint" style={{ padding: "12px 14px", margin: 0 }}>
+                No candidates in this segment. Cues are rule-detected from the working text.
+              </p>
+            )}
+            {segmentCues.map((cue) => (
+              <div className="cue" key={cue.id} data-cue-id={cue.id}>
+                <div className="cue__top">
+                  <Stamp tone="info">{cue.entity_type}</Stamp>
+                  <span className="hint mono">{formatTimecode(cue.start_s)}</span>
+                </div>
+                <div className="cue__text">“{cue.span_text}”</div>
+                <div className="cue__row">
+                  <span className="hint">Reason</span>
+                  <span className="mono" style={{ fontSize: 11 }}>
+                    {cue.reason_code}
+                  </span>
+                  <span style={{ marginLeft: "auto" }}>
+                    <ConfidenceChip value={cue.confidence} />
+                  </span>
+                </div>
+                <div className="cue__actions">
+                  <button
+                    className={`btn btn--sm ${cue.decision === "accept" ? "is-on" : ""}`}
+                    disabled={deciding.has(cue.id)}
+                    aria-busy={deciding.has(cue.id)}
+                    onClick={() => void decide(cue, "accept")}
+                  >
+                    Accept
+                  </button>
+                  <button
+                    className={`btn btn--sm ${cue.decision === "reject" ? "is-on-reject" : ""}`}
+                    disabled={deciding.has(cue.id)}
+                    aria-busy={deciding.has(cue.id)}
+                    onClick={() => void decide(cue, "reject")}
+                  >
+                    Reject
+                  </button>
+                  <button
+                    className={`btn btn--sm btn--quiet ${
+                      cue.decision === "not_redactable" ? "is-on" : ""
+                    }`}
+                    disabled={deciding.has(cue.id)}
+                    aria-busy={deciding.has(cue.id)}
+                    onClick={() => void decide(cue, "not_redactable")}
+                  >
+                    Not redactable
+                  </button>
+                </div>
+                {cue.decision !== "open" && (
+                  <div className="hint" style={{ marginTop: 5 }}>
+                    {cue.decision.replace("_", " ")} · {cue.reviewer}
+                  </div>
+                )}
+              </div>
+            ))}
+          </Panel>
+
+          <div style={{ marginTop: 14 }}>
+            <Panel title="Custody" flush>
+              <CustodyList events={events} />
+            </Panel>
+          </div>
         </aside>
       </div>
+
+      <PlayerDock
+        recordingId={recordingId}
+        title={`${label} · ${exhibit.filename}`}
+        subtitle={
+          selected
+            ? `${formatTimecode(selected.start_s)} – ${formatTimecode(selected.end_s)}`
+            : undefined
+        }
+        hasDenoised={exhibit.has_denoised}
+        jumpTo={jumpTo}
+        jumpToken={jumpToken}
+        fallbackDuration={exhibit.duration_s}
+        actions={
+          <button className="btn btn--sm" onClick={() => void onChanged()}>
+            Refresh case
+          </button>
+        }
+      />
     </div>
   );
 }

@@ -210,3 +210,107 @@ class ActorOut(BaseModel):
     actor: str
     role: str
     permissions: list[str]
+
+
+# --- cases, cue sheet, cost -------------------------------------------------
+
+
+class ExhibitOut(BaseModel):
+    id: str
+    filename: str
+    source_type: str
+    duration_s: float | None = None
+    recorded_at: datetime | None = None
+    status: str
+    segment_count: int = 0
+    review_counts: dict[str, int] = Field(default_factory=dict)
+    reviewed_pct: float = 0.0
+    indexed: str = "none"  # full | window | none
+    indexed_ranges: list[list[float]] = Field(default_factory=list)
+    indexed_s: float = 0.0
+    dark_s: float = 0.0
+    custody_events: int = 0
+    cue_total: int = 0
+    cue_open: int = 0
+    # Whether a denoised derivative exists for this exhibit. The player dock's
+    # Original/Denoised switch needs this to avoid offering a variant that the
+    # audio endpoint would answer with a 404 — `GET /audio?variant=denoised`
+    # raises "No 'denoised' audio for this recording" when `denoised_path` is
+    # unset, and an exhibit is disclosed the moment it is uploaded, well before
+    # anyone has run denoise on it. Defaulted to False so an older client that
+    # ignores the field still sees the safe state.
+    has_denoised: bool = False
+
+
+class CaseOut(BaseModel):
+    id: str
+    number: str
+    subject: str
+    description: str | None = None
+    disclosure_due: datetime | None = None
+    days_to_disclosure: int | None = None
+    owner: str | None = None
+    status: str
+    exhibits: list[ExhibitOut] = Field(default_factory=list)
+    totals: dict[str, float] = Field(default_factory=dict)
+
+
+class CueOut(BaseModel):
+    id: str
+    recording_id: str
+    segment_id: str | None = None
+    start_s: float
+    end_s: float
+    span_text: str
+    entity_type: str
+    reason_code: str
+    reason_label: str = ""
+    confidence: float
+    detector: str = "rules"
+    decision: str
+    reviewer: str | None = None
+    decided_at: datetime | None = None
+    exhibit: str | None = None
+    filename: str | None = None
+
+
+class CueDecisionIn(BaseModel):
+    decision: Literal["open", "accept", "reject", "not_redactable"]
+
+
+class CostScenarioOut(BaseModel):
+    key: str
+    label: str
+    detail: str
+    compute_hours: float
+    cost: float
+    coverage_pct: float
+    time_to_answer: str
+
+
+class CostOut(BaseModel):
+    audio_hours: float
+    exhibits: int
+    rate_per_hour: float
+    rtf: float
+    scenarios: list[CostScenarioOut] = Field(default_factory=list)
+    archive_hours: float = 0.0
+    archive_tapes: int = 0
+    archive_scenarios: list[CostScenarioOut] = Field(default_factory=list)
+    assumptions: list[str] = Field(default_factory=list)
+
+
+class BundleItemOut(BaseModel):
+    name: str
+    bytes: int
+    kind: str
+
+
+class BundlePlanOut(BaseModel):
+    case_id: str
+    number: str
+    items: list[BundleItemOut] = Field(default_factory=list)
+    total_bytes: int = 0
+    manifest_sha256: str = ""
+    warnings: list[str] = Field(default_factory=list)
+    unverified_exhibits: list[str] = Field(default_factory=list)

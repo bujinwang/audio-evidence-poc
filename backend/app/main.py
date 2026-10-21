@@ -19,6 +19,8 @@ from .pipeline.embed import get_embedder
 from .pipeline.transcribe import FasterWhisperTranscriber, WhisperXTranscriber
 from .pipeline.vectorstore import get_vector_store
 from .routers import audit as audit_router
+from .routers import cases as cases_router
+from .routers import jobs as jobs_router
 from .routers import recordings as recordings_router
 from .routers import review as review_router
 from .routers import search as search_router
@@ -64,9 +66,11 @@ app.add_middleware(
 )
 
 app.include_router(recordings_router.router)
+app.include_router(jobs_router.router)
 app.include_router(search_router.router)
 app.include_router(review_router.router)
 app.include_router(audit_router.router)
+app.include_router(cases_router.router)
 
 
 @app.get("/api/me", response_model=ActorOut, tags=["system"])
@@ -173,7 +177,15 @@ def config() -> dict:
     settings = get_settings()
     return {
         "max_upload_mb": settings.max_upload_mb,
-        "source_types": ["interview", "bodycam", "cassette", "phone_call", "other"],
+        "source_types": [
+            "interview",
+            "bodycam",
+            "cassette",
+            "phone_call",
+            "sports",
+            "speech",
+            "other",
+        ],
         "review_statuses": ["ai_generated", "in_review", "corrected", "verified"],
         "search_modes": ["keyword", "semantic", "hybrid"],
         "inline_processing": settings.process_inline,
@@ -181,8 +193,8 @@ def config() -> dict:
             settings.embedder, settings.embedding_model
         ).is_semantic,
         "disclaimer": (
-            "AI output is not evidence of truth. Transcripts are machine-generated until a "
-            "reviewer verifies them; verification is recorded per segment."
+            "A transcript is not evidence of truth. Every segment stays machine-generated "
+            "until a reviewer verifies it; verification is recorded per segment."
         ),
     }
 

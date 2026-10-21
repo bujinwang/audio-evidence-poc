@@ -13,7 +13,7 @@ Rules enforced here (PRD FR-06):
 from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.orm import Session
 
 from .. import audit, indexing
@@ -45,6 +45,38 @@ def _variant_of(session: Session, segment: Segment) -> str:
     return transcript.variant if transcript else "original"
 
 
+def _allocate_version(session: Session, segment: Segment) -> int:
+    """Reserve the next revision number for `segment` atomically.
+
+    Reading `segment.version` and adding one in Python is a read-modify-write:
+    two concurrent edits both read `1`, both compute `2`, and both insert a
+    revision claiming to be version 2. The correction history for that passage
+    then holds two different changes under one number — an ambiguous audit
+    trail. `UPDATE ... RETURNING` moves the increment into a single statement,
+    so the database serialises the two writers and each receives a number no
+    other transaction also received. (`RETURNING` is supported by both SQLite
+    >= 3.35 and PostgreSQL, the two dialects this app targets.)
+
+    The value is written straight to the row, so the ORM copy is deliberately
+    left alone (`synchronize_session=False`): if the attribute were updated from
+    Python instead, the next flush could rewrite the column from a value that a
+    concurrent transaction had already moved past. Callers must
+    `session.refresh(segment)` before serialising.
+    """
+    table = Segment.__table__
+    next_version = session.execute(
+        update(table)
+        .where(table.c.id == segment.id)
+        .values(version=table.c.version + 1)
+        .returning(table.c.version),
+        execution_options={"synchronize_session": False},
+    ).scalar_one_or_none()
+
+    if next_version is None:  # segment vanished between load and update
+        raise HTTPException(status_code=404, detail="segment not found")
+    return int(next_version)
+
+
 @router.patch("/{segment_id}", response_model=SegmentOut)
 def update_segment(
     segment_id: str,
@@ -61,8 +93,11 @@ def update_segment(
 
     invalidated_verification = segment.review_status == ReviewStatus.VERIFIED
 
+    # Reserve the version before writing anything else: if this raises, no
+    # revision row is written and the transaction rolls back as a whole.
+    new_version = _allocate_version(session, segment)
+
     segment.text = new_text
-    segment.version = (segment.version or 1) + 1
     segment.review_status = ReviewStatus.CORRECTED
     segment.verified_by = None
     segment.verified_at = None
@@ -70,7 +105,7 @@ def update_segment(
     session.add(
         Revision(
             segment_id=segment.id,
-            version=segment.version,
+            version=new_version,
             prev_text=previous_text,
             new_text=new_text,
             actor=actor.name,
@@ -84,7 +119,7 @@ def update_segment(
         session, actor, "segment.edited",
         entity_type="segment", entity_id=segment.id, recording_id=segment.recording_id,
         detail={
-            "version": segment.version,
+            "version": new_version,
             "prev_text": previous_text,
             "new_text": new_text,
             "note": payload.note,
@@ -95,10 +130,12 @@ def update_segment(
         audit.record(
             session, actor, "segment.verification_invalidated",
             entity_type="segment", entity_id=segment.id, recording_id=segment.recording_id,
-            detail={"reason": "text edited after verification", "version": segment.version},
+            detail={"reason": "text edited after verification", "version": new_version},
         )
 
     session.commit()
+    # `expire_on_commit=False`, so the ORM still holds the pre-update version.
+    # Re-read the row to report what the database actually allocated.
     session.refresh(segment)
     return segment_out(segment, _variant_of(session, segment))
 

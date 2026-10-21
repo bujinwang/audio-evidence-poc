@@ -1,5 +1,10 @@
 import type {
+  BundlePlan,
+  CaseFile,
   Comparison,
+  CostModel,
+  Cue,
+  CueDecision,
   Health,
   Provenance,
   Recording,
@@ -74,6 +79,26 @@ export const api = {
   me: () => request<{ actor: string; role: string; permissions: string[] }>("/api/me"),
   config: () => request<Record<string, any>>("/api/config"),
 
+  // --- cases ---------------------------------------------------------------
+  cases: () => request<CaseFile[]>("/api/cases"),
+  case: (caseId: string) => request<CaseFile>(`/api/cases/${caseId}`),
+  cost: (caseId: string, params: { archive_hours?: number; tapes?: number } = {}) =>
+    request<CostModel>(`/api/cases/${caseId}/cost${query(params)}`),
+  bundlePlan: (caseId: string) => request<BundlePlan>(`/api/cases/${caseId}/bundle`),
+
+  cues: (caseId: string, params: { decision?: string; recording_id?: string } = {}) =>
+    request<Cue[]>(`/api/cases/${caseId}/cues${query(params)}`),
+  decideCue: (cueId: string, decision: CueDecision) =>
+    request<Cue>(`/api/cues/${cueId}/decision`, {
+      method: "POST",
+      body: JSON.stringify({ decision }),
+    }),
+  rescanCues: (recordingId: string) =>
+    request<{ created: number; total: number }>(
+      `/api/recordings/${recordingId}/cues/rescan`,
+      { method: "POST" },
+    ),
+
   listRecordings: () => request<Recording[]>("/api/recordings"),
   getRecording: (id: string) => request<Recording>(`/api/recordings/${id}`),
   retry: (id: string) => request<Recording>(`/api/recordings/${id}/retry`, { method: "POST" }),
@@ -121,5 +146,29 @@ export const api = {
   audioUrl: (recordingId: string, variant = "original") =>
     `/api/recordings/${recordingId}/audio?variant=${variant}`,
 };
+
+/**
+ * Download a response as a file, carrying the acting identity.
+ *
+ * A plain <a href> would drop the X-Actor/X-Role headers and, in a deployment
+ * with anonymous access off, hand the user a 401 instead of a disclosure bundle.
+ */
+export async function download(path: string, fallbackName: string): Promise<void> {
+  const headers = new Headers({ "X-Actor": auth.actor, "X-Role": auth.role });
+  const response = await fetch(path, { headers });
+  if (!response.ok) throw new ApiError(response.status, `Download failed (${response.status})`);
+  const blob = await response.blob();
+  const disposition = response.headers.get("Content-Disposition") ?? "";
+  const match = /filename="?([^";]+)"?/.exec(disposition);
+  const name = match?.[1] ?? fallbackName;
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = name;
+  document.body.appendChild(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
 
 export const audioUrl = api.audioUrl;

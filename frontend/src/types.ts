@@ -195,3 +195,109 @@ export interface Provenance {
   status: string;
   steps: ProvenanceStep[];
 }
+
+// --- cases, cue sheet, cost, bundle ----------------------------------------
+
+export interface Exhibit {
+  id: string;
+  filename: string;
+  source_type: string;
+  duration_s: number | null;
+  recorded_at: string | null;
+  status: string;
+  segment_count: number;
+  review_counts: Record<string, number>;
+  reviewed_pct: number;
+  indexed: "full" | "window" | "none";
+  indexed_ranges: number[][];
+  indexed_s: number;
+  dark_s: number;
+  custody_events: number;
+  cue_total: number;
+  cue_open: number;
+  /** A denoised derivative exists; the dock's Original/Denoised switch is only offered when true. */
+  has_denoised: boolean;
+}
+
+export interface CaseTotals {
+  exhibits: number;
+  audio_hours: number;
+  indexed_hours: number;
+  segments: number;
+  verified: number;
+  reviewed_pct: number;
+  cue_total: number;
+  cue_open: number;
+}
+
+export interface CaseFile {
+  id: string;
+  number: string;
+  subject: string;
+  description: string | null;
+  disclosure_due: string | null;
+  days_to_disclosure: number | null;
+  owner: string | null;
+  status: string;
+  exhibits: Exhibit[];
+  totals: CaseTotals;
+}
+
+export type CueDecision = "open" | "accept" | "reject" | "not_redactable";
+
+export interface Cue {
+  id: string;
+  recording_id: string;
+  segment_id: string | null;
+  start_s: number;
+  end_s: number;
+  span_text: string;
+  entity_type: string;
+  reason_code: string;
+  reason_label: string;
+  confidence: number;
+  detector: string;
+  decision: CueDecision;
+  reviewer: string | null;
+  decided_at: string | null;
+  exhibit: string | null;
+  filename: string | null;
+}
+
+export interface CostScenario {
+  key: string;
+  label: string;
+  detail: string;
+  compute_hours: number;
+  cost: number;
+  coverage_pct: number;
+  time_to_answer: string;
+}
+
+export interface CostModel {
+  audio_hours: number;
+  exhibits: number;
+  rate_per_hour: number;
+  rtf: number;
+  scenarios: CostScenario[];
+  archive_hours: number;
+  archive_tapes: number;
+  archive_scenarios: CostScenario[];
+  assumptions: string[];
+}
+
+export interface BundleItem {
+  name: string;
+  bytes: number;
+  kind: string;
+}
+
+export interface BundlePlan {
+  case_id: string;
+  number: string;
+  items: BundleItem[];
+  total_bytes: number;
+  manifest_sha256: string;
+  warnings: string[];
+  unverified_exhibits: string[];
+}

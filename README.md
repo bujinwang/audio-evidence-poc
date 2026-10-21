@@ -24,19 +24,48 @@ of breaking the pipeline.
 
 ## Screens
 
-**Search** — natural-language query, three retrieval modes, filters, and a player
-that jumps to the matched timestamp.
+The UI is a case-centric operations console, not a search box with a library
+attached. Seven screens, all reading live data.
 
-![Search screen](docs/screenshots/02-search.png)
+**Case queue** — every case with its exhibit count, review state and disclosure
+clock. Sorted by what is due next, not by what was opened last.
 
-**Review** — transcript beside the player, correction with the AI text preserved,
-explicit verification, and revision history.
+![Case queue](docs/screenshots/01-cases.png)
 
-![Review screen](docs/screenshots/03-review.png)
+**Evidence** — the exhibit list for one case: what is indexed, what is dark, how
+much is verified, and the custody events per exhibit.
 
-**Library** — upload, live processing state, review counters, retry on failure.
+![Evidence](docs/screenshots/02-evidence.png)
 
-![Library screen](docs/screenshots/01-library.png)
+**Find** — one query across the case, results as passages with a player dock that
+jumps to the matched second.
+
+![Find](docs/screenshots/03-find.png)
+
+**Review** — three panes: transcript, the segment with its correction diff and
+history, and the redaction candidates for that segment with custody beside them.
+
+![Review](docs/screenshots/04-review.png)
+
+**Cue sheet** — the audio half of the redaction pipeline: reason codes, confidence,
+decisions, and a CSV/JSON export that drives the blur pass rather than performing it.
+
+![Cue sheet](docs/screenshots/05-cue-sheet.png)
+
+**Bundle** — the disclosure package: contents with real sizes, the cover sheet as it
+will print, the manifest, and a warning that names the unverified exhibits.
+
+![Bundle](docs/screenshots/06-bundle.png)
+
+**Cost model** — three ways to answer the same question, priced for this case and
+for the archive, ending on where it breaks.
+
+![Cost model](docs/screenshots/07-cost.png)
+
+> The design rationale, the research behind it and the screen-by-screen spec are in
+> [`docs/redesign/`](docs/redesign/README.md), with a clickable prototype at
+> `docs/redesign/prototype.html`. Section 13 of that document records where the
+> build deliberately differs from the prototype.
 
 ---
 
@@ -145,7 +174,9 @@ model downloads to `~/.cache/huggingface` on first use — **282 MB for `base`,
 927 MB for `small`** (measured, float16 CTranslate2 weights).
 
 **Measured on this machine** (Apple Silicon, CPU, int8) with
-`scripts/evaluate_asr.py`, which scores ASR against the reference transcripts:
+`scripts/evaluate_asr.py`, which scores ASR against the reference transcripts.
+Both sets are synthesised on demand and are not checked in — see *Synthetic voice
+generation* below to rebuild them:
 
 | Model | Noisy test set | Clean demo set | RTF | Verdict |
 |---|---|---|---|---|
@@ -437,20 +468,42 @@ themselves whether it helps them hear.
 
 ## The five-minute demo
 
+The library is real audio. Nothing in it is synthesised — no TTS, no generated
+transcripts. Four public recordings, plus the two real files the project already
+carried:
+
 ```bash
-cd backend && ./.venv/bin/python scripts/make_demo_data.py
+scripts/fetch_public_audio.sh --upload
 ```
 
-This synthesises three **non-sensitive** recordings with real speech, exact
-timestamps, and a reference transcript for each:
-
-| Recording | Source | Why it exists |
+| Recording | Source type | Why it exists |
 |---|---|---|
-| `2026-08-14_interview_witness-a.wav` | interview | clean two-speaker statement |
-| `2026-08-16_bodycam_unit-412.wav` | bodycam | short operational exchanges, one over radio |
-| `1998-04-02_cassette_statement.wav` | cassette | pink-noise hiss, so denoising has a purpose |
+| `2022-09-07_911_call_phoenix.wav` | phone call | a 911 call about a woman hiding from her attacker; narrow band, low level, the hardest clip here |
+| `2025-11-15_sport_football-championship.wav` | sport | two commentators over stadium ambience, continuous overlapping speech |
+| `2026-05-26_speech_nasa-moonbase.wav` | speech | formal read-aloud briefing, dense technical vocabulary |
+| `2025-07-08_speech_commencement-northwestern.wav` | speech | conversational delivery with laughter and applause |
+| `AMI_EN2002c_sdm.wav` | interview | four-speaker meeting, real room, human transcript |
+| `eps_presser.flac` | other | 30-minute police press conference — the long-recording case |
 
-### Voice generation
+Provenance, trims, gains and **rights** are in `data/public-audio/SOURCES.md`.
+Two of the four clips are third-party copyrighted excerpts: fine for an internal
+walkthrough, not for a public link.
+
+Then, in the UI:
+
+1. **Search** `woman hiding from an attacker` → the 911 passage comes back first
+   even though none of those words are in the transcript.
+2. Click a result → the player seeks to that timestamp in the **original** file.
+3. **Open in review** → correct a line, save. Notice the status becomes
+   *Corrected*, not *Verified*.
+4. **Mark verified** → reviewer identity and timestamp are recorded.
+5. Open **History** → previous text, who changed it, when, and why.
+
+### Synthetic voice generation (legacy — not used by the library)
+
+`backend/scripts/make_demo_data.py` still works and is still documented here,
+because the project was built on it before real audio was available. It is no
+longer part of the demo library and nothing below is needed to run the demo.
 
 Speech comes from a provider chain, `--engine {auto,edge,say,tone}`:
 
@@ -506,17 +559,21 @@ Then, in the UI:
 4. **Mark verified** → reviewer identity and timestamp are recorded.
 5. Open **History** → previous text, who changed it, when, and why.
 
-### Noisy test set — for trying the pipeline on hard audio
+### Noisy test set — synthetic benchmark, not library content
 
-The three demo files are deliberately clean. Real evidence is not:
+The public clips are real, but they are not degraded on purpose. To test the
+pipeline at a known difficulty, generate the synthetic noisy set. This is the one
+place the repo still produces synthetic speech, and it is benchmark material, not
+something the library loads:
 
 ```bash
 cd backend && ./.venv/bin/python scripts/make_noisy_test_set.py
 # then open the Library and drag the files in from data/test-audio/
 ```
 
-Six more recordings with realistic degradation and the same exact-timestamp
-sidecars, so timestamp playback is still testable at 4 dB:
+The audio is not checked in — it is rebuilt on demand and is byte-identical each
+time. Six recordings with realistic degradation and exact-timestamp sidecars, so
+timestamp playback is still testable at 4 dB:
 
 | File | Noise | SNR |
 |---|---|---|
@@ -783,9 +840,12 @@ audio-evidence-poc/
 │   │   └── reembed.py             # rebuild the semantic index with the active embedder
 │   └── tests/                 # 113 tests
 ├── frontend/src/              # React + TS (Search, Library, Review)
+├── scripts/
+│   ├── fetch_public_audio.sh  # download + cut the four public clips
+│   ├── prune_recordings.py    # remove a recording (rows, FTS, files)
+│   └── share_demo.sh          # public demo link via Cloudflare tunnel
 ├── data/
-│   ├── samples/               # clean demo set
-│   ├── test-audio/            # noisy test set
+│   ├── public-audio/          # SOURCES.md (committed) + clips (gitignored)
 │   └── real-audio/            # AMI clips + headset control + EPS presser + README
 └── docs/ACCEPTANCE.md
 ```
