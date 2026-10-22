@@ -36,6 +36,27 @@ export function ReviewStamp({ status }: { status: ReviewStatus }) {
   return <Stamp tone={REVIEW_TONE[status] ?? "plain"}>{REVIEW_LABEL[status] ?? status}</Stamp>;
 }
 
+/**
+ * The line the PRD draws in §10: AI relevance and transcription are not proof of
+ * fact. The badge is the same message rendered as a reusable, consistent mark
+ * wherever the system shows an AI-generated match or passage, so the operator is
+ * never left to infer the distinction. It is deliberately the `plain` (dashed,
+ * muted) stamp — quiet, not alarming — because it accompanies every result and
+ * must not read as an error. Used on the Find results summary and on every
+ * semantic (similarity) hit, the match type most easily mistaken for a factual
+ * finding.
+ */
+export function VeracityBadge({ label }: { label?: string }) {
+  return (
+    <span
+      className="stamp stamp--plain"
+      title="AI-generated match — not evidence of fact. Listen to the source before relying on it."
+    >
+      {label ?? "AI match · not evidence"}
+    </span>
+  );
+}
+
 /** 0–1 confidence as the reviewer sees it: a number and a colour, never colour alone. */
 export function ConfidenceChip({ value }: { value: number }) {
   const pct = Math.round(value * 100);

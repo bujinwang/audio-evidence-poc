@@ -78,6 +78,9 @@ Denoising must not be assumed to improve every recording. The original remains t
 - Support hybrid retrieval combining keyword and semantic results.
 - Filter by recording ID, date, source type, speaker label, and review status where available.
 - Display relevant text passages with timestamps and recording references.
+- Provide curated **scenario prompts** (e.g. find a vehicle, a named person, a time or place, an admission) that pre-select the appropriate search mode (keyword / semantic / hybrid), so an investigator starts from an evidentiary ask rather than a blank box.
+- Show an explicit **source citation** on each result that jumps to the original audio at the matched timestamp.
+- Label which signal produced each hit (keyword, semantic, or hybrid).
 
 ### FR-05: Audio Playback
 
@@ -155,10 +158,12 @@ All major processing components should be replaceable through well-defined inter
 
 ### Screen B — Investigator Search
 
-- Natural-language search field.
+- Natural-language search field, plus curated **scenario prompts** (find a vehicle, a named person, a time/place, an admission) that each pre-select the matching search mode.
 - Keyword, semantic, and hybrid search modes.
 - Search filters.
 - Ranked results showing passage text, recording ID, timestamps, and review status.
+- An explicit **source citation** on each result that jumps to the original audio at the matched timestamp.
+- A persistent **"not evidence of fact"** badge on AI-generated matches and on every semantic (similarity) hit, reinforcing that AI relevance is not proof (see §10).
 - Audio player that jumps directly to the selected passage.
 
 ### Screen C — Transcript Review
@@ -190,6 +195,7 @@ All major processing components should be replaceable through well-defined inter
 - Treat Alberta and Canadian privacy, retention, disclosure, and evidentiary requirements as deployment-review items.
 - Do not automatically assign a real person's identity to a speaker based solely on voice.
 - Do not represent AI search relevance or transcription output as proof of factual truth.
+- Surface the "AI match is not evidence of fact" principle in the UI as a persistent badge on AI-generated and semantic matches, so the operator is never left to infer the distinction.
 
 ## 11. Acceptance Criteria
 

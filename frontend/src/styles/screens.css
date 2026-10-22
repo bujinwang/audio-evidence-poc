@@ -219,6 +219,91 @@
   letter-spacing: 0.04em;
 }
 
+/* --- scenario prompts (empty / first-run state) --------------------------- */
+/* Muse's "no blank input box": the operator picks an evidentiary ask instead of
+   staring at a cursor. Two labelled groups keep the curated scenarios and the
+   source-derived suggestions from reading as one undifferentiated list. */
+.scenarios {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.scenario {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.scenario__k {
+  font-size: 9.5px;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+  flex: 0 0 auto;
+  padding-top: 2px;
+}
+
+.scenario__items {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* The mode tag is quiet and mono so the ask stays the primary word, but it makes
+   the mechanism visible (semantic = similarity, not proof; keyword = literal;
+   hybrid = both) without opening the Mode control. */
+.chip--scenario {
+  align-items: baseline;
+}
+
+.scenario__mode {
+  font: 9px/1 var(--mono);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+/* --- inline citation ---------------------------------------------------- */
+/* The explicit source link on a result: a clickable anchor that jumps to the
+   original audio at the matched timestamp. The whole row already does this, but
+   a labelled citation makes the provenance obvious rather than implicit, which
+   is the point of citing a source. */
+.hitpassage {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.cite {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: 11px/1.4 var(--mono);
+  color: var(--navy-2);
+  background: var(--wash);
+  border: 1px solid #d5e0ec;
+  border-radius: var(--radius-sm);
+  padding: 2px 7px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.cite:hover {
+  background: var(--navy);
+  color: #fff;
+  border-color: var(--navy);
+}
+
+.hittext {
+  line-height: 1.45;
+}
+
 /* --- player dock ---------------------------------------------------------- */
 .dock {
   position: fixed;

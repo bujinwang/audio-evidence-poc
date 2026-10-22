@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { api } from "../api";
 import { Empty, Kbd, Notice } from "../components/Layout";
-import { ReviewStamp, Stamp } from "../components/Stamp";
+import { ReviewStamp, VeracityBadge } from "../components/Stamp";
 import PlayerDock from "../components/PlayerDock";
 import { formatTimecode } from "../lib/format";
 import type { CaseFile, SearchHit, SearchMode, SearchResponse } from "../types";
@@ -32,6 +32,46 @@ function suggestionsFor(caseFile: CaseFile): string[] {
   }
   return seen.length ? seen.slice(0, 4) : SUGGESTIONS_BY_TYPE.other;
 }
+
+/**
+ * Scenario prompts — the Muse "no blank input box" idea applied to this screen.
+ *
+ * The free-text field stays: investigators must be able to ask anything. But a
+ * blank box in an evidence tool is a start-anxiety trap — the operator knows
+ * what they are looking for (a vehicle, a name, a time) and does not know which
+ * of keyword / semantic / hybrid will find it. These prompts name the common
+ * evidentiary asks and pre-select the mode that answers them, so the operator
+ * learns the system's capabilities by using them. Each tag is honest about the
+ * mechanism: "semantic" means a similarity match that is explicitly *not* proof
+ * (see `VeracityBadge`), "keyword" means a literal string, "hybrid" means both.
+ *
+ * Kept separate from `SUGGESTIONS_BY_TYPE`: that list is derived from the
+ * exhibits' source types so the first result is meaningful whichever case opens;
+ * these are curated evidentiary categories every case shares. Both render in the
+ * empty state, in two labelled groups, so they do not read as one undifferentiated
+ * pile of chips.
+ */
+const SCENARIO_PROMPTS: {
+  group: string;
+  items: { label: string; query: string; mode: SearchMode; tag: string }[];
+}[] = [
+  {
+    group: "Find by concept",
+    items: [
+      { label: "a vehicle", query: "a blue pickup truck", mode: "semantic", tag: "semantic" },
+      { label: "an admission", query: "I did it", mode: "semantic", tag: "semantic · heuristic" },
+      { label: "a threat or warning", query: "you better watch out", mode: "semantic", tag: "semantic · heuristic" },
+    ],
+  },
+  {
+    group: "Find by fact",
+    items: [
+      { label: "a named person", query: "John Smith", mode: "hybrid", tag: "hybrid" },
+      { label: "a time or date", query: "at midnight on Friday", mode: "keyword", tag: "keyword" },
+      { label: "a place or address", query: "on 104 Street", mode: "keyword", tag: "keyword" },
+    ],
+  },
+];
 
 /**
  * How many passages the archive probe asks for.
@@ -762,7 +802,7 @@ export default function Find({
             {results.diagnostics.embedder ? ` · ${results.diagnostics.embedder}` : ""}
             {results.diagnostics.semantic === false ? " (lexical fallback)" : ""}
             <span style={{ marginLeft: 10 }}>
-              <Stamp tone="plain">a match is not proof — listen first</Stamp>
+              <VeracityBadge label="a match is not proof — listen first" />
             </span>
           </span>
         )}
@@ -799,20 +839,59 @@ export default function Find({
       */}
       {(!results || noHits) && !loading && !blockedBy && (
         <div className="results" style={{ paddingTop: 18 }}>
-          <div className="suggestions" style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            <span className="hint">Try:</span>
-            {suggestions.map((suggestion) => (
-              <button
-                key={suggestion}
-                className="chip"
-                onClick={() => {
-                  setQuery(suggestion);
-                  void run(suggestion, mode);
-                }}
-              >
-                {suggestion}
-              </button>
+          {/*
+            The empty / first-run state, in two labelled groups by design:
+
+            - "Scenario prompts" are curated evidentiary asks (Muse's "no blank
+              box"): clicking one pre-selects the search mode that answers it, so
+              the operator learns what the system can find without first knowing.
+            - "From this case's exhibits" are the source-type-derived suggestions
+              that keep the first result meaningful per case (see `suggestionsFor`).
+
+            Both set the box and run; the operator edits the text afterwards. The
+            scenario query is an editable example, not a literal instruction.
+          */}
+          <div className="scenarios">
+            {SCENARIO_PROMPTS.map((group) => (
+              <div className="scenario" key={group.group}>
+                <span className="scenario__k">{group.group}</span>
+                <div className="scenario__items">
+                  {group.items.map((item) => (
+                    <button
+                      key={item.label}
+                      className="chip chip--scenario"
+                      title={`Search "${item.query}" using ${item.mode} matching`}
+                      onClick={() => {
+                        setMode(item.mode);
+                        setQuery(item.query);
+                        void run(item.query, item.mode);
+                      }}
+                    >
+                      {item.label}
+                      <span className="scenario__mode">{item.tag}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
+
+            <div className="scenario">
+              <span className="scenario__k">From this case's exhibits</span>
+              <div className="scenario__items">
+                {suggestions.map((suggestion) => (
+                  <button
+                    key={suggestion}
+                    className="chip"
+                    onClick={() => {
+                      setQuery(suggestion);
+                      void run(suggestion, mode);
+                    }}
+                  >
+                    {suggestion}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
@@ -954,7 +1033,31 @@ export default function Find({
                     />
                   </td>
                   <td>
-                    <div>{hit.snippet}</div>
+                    {/*
+                      Inline citation. The whole row already jumps to the source
+                      audio, but a labelled source anchor makes the provenance
+                      obvious rather than implicit — the point of citing a source.
+                      `stopPropagation` keeps the row's own handler from also
+                      firing. A semantic (similarity) hit carries the veracity
+                      badge, because that match type is the one most easily
+                      mistaken for a factual finding.
+                    */}
+                    <div className="hitpassage">
+                      <button
+                        type="button"
+                        className="cite"
+                        title="Jump to the source audio at this timestamp"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSelected(hit);
+                          setJumpToken((token) => token + 1);
+                        }}
+                      >
+                        ▶ {formatTimecode(hit.start_s)} · {recordings[hit.recording_id]?.label ?? "—"}
+                      </button>
+                      {hit.matched_by.includes("semantic") && <VeracityBadge />}
+                    </div>
+                    <div className="hittext">{hit.snippet}</div>
                     <div className="hitmeta">
                       {hit.recording_filename} ·{" "}
                       {hit.recorded_at
