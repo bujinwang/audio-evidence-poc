@@ -807,8 +807,19 @@ Interactive docs at `/docs`.
 ## Testing
 
 ```bash
-cd backend && ./.venv/bin/python -m pytest -q     # 113 passed
+make test-all      # both suites — the pre-push gate
+make test          # backend only  (pytest, 197 passed)
+make test-ui       # frontend only (vitest,  11 passed)
 ```
+
+The backend suite covers ingestion, transcription, indexing, search, review,
+revisions, custody, cue sheet, bundle and cost. The frontend suite covers the
+Find screen's AI-UX layer — scenario prompts (including that the mode control
+agrees with the request), inline source citations, and the "not evidence" badge
+on semantic matches — plus regressions on result rendering and error states.
+
+`tsc --noEmit` and `vite build` run as part of `npm run build`; they prove the
+UI compiles, not that it behaves, which is why the behaviour tests above exist.
 
 Coverage maps to the PRD's acceptance criteria one-for-one — see
 [`docs/ACCEPTANCE.md`](docs/ACCEPTANCE.md).

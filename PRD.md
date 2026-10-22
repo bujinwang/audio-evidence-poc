@@ -213,6 +213,9 @@ The demonstration is accepted when:
 10. An authorized reviewer can explicitly mark a segment verified.
 11. Review actions are recorded in an audit trail.
 12. Automated tests cover the primary workflow.
+13. A scenario prompt sets the search mode it advertises, and the visible mode control agrees with the request issued.
+14. Each search result shows a source citation that opens the original audio at the matched timestamp.
+15. Semantic matches carry a visible "not evidence of fact" badge, and keyword-only matches are not falsely decorated with it.
 
 Search relevance and transcription accuracy must be evaluated against manually reviewed reference material where available.
 

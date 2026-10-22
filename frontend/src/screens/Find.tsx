@@ -1046,6 +1046,14 @@ export default function Find({
                       <button
                         type="button"
                         className="cite"
+                        /*
+                          The visible label is a glyph and a timecode, which reads
+                          as a destination but not as an action. An explicit
+                          accessible name says what the press will do and names
+                          the exhibit, so the control is usable without sight of
+                          the row it sits in.
+                        */
+                        aria-label={`Jump to the source audio at ${formatTimecode(hit.start_s)} in ${recordings[hit.recording_id]?.label ?? "this exhibit"}`}
                         title="Jump to the source audio at this timestamp"
                         onClick={(event) => {
                           event.stopPropagation();
